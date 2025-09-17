@@ -6,10 +6,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.RobotContainer;
 
 public class Template extends SequentialCommandGroup {
-  public Template(RobotContainer robotContainer) {
+  public Template() {
 
     /* All your code should go inside this try-catch block */
     try {
