@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -13,12 +15,16 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -29,6 +35,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    private double maxSpeed = TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond);
+    private double maxAngularRate = 2.5 * Math.PI;
+
+    private final Telemetry logger =
+        new Telemetry(TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond));
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -38,6 +50,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+
+    private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric();
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -58,6 +72,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             startSimThread();
         }
         configureAutoBuilder();
+        resetPose(new Pose2d(10, 3, Rotation2d.kZero));
+        registerTelemetry(logger::telemeterize);
     }
 
     private void configureAutoBuilder() {
@@ -124,4 +140,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+
+    public Command defaultDrive(CommandXboxController controller) {
+    return this.run(
+        () -> {
+          double xInput = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
+          double yInput = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
+          double rotInput = MathUtil.applyDeadband(-controller.getRightX(), 0.1);
+
+          double xVelocity = xInput * maxSpeed;
+          double yVelocity = yInput * maxSpeed;
+          double angularVelocity = rotInput * maxAngularRate;
+
+          this.setControl(
+              fieldCentricRequest
+                  .withVelocityX(xVelocity)
+                  .withVelocityY(yVelocity)
+                  .withRotationalRate(angularVelocity));
+        });
+  }
 }
