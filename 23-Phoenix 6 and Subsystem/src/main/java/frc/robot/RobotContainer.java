@@ -6,25 +6,30 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystem.arm.ArmSubsystem;
-import frc.robot.subsystem.elevator.ElevatorSubsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Comp;
 
 public class RobotContainer {
-  /*
-   * Subsystems
-   */
-  private final ArmSubsystem arm = new ArmSubsystem();
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final SwerveSubsystem swerve = TunerConstants_Comp.createDrivetrain();
 
-  private final RobotVisualizer robotVisualizer = new RobotVisualizer(arm, elevator);
+  // private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
+
+  private final CommandXboxController controller = new CommandXboxController(0);
 
   public RobotContainer() {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    swerve.setDefaultCommand(swerve.defaultDrive(controller));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
+
+  /********************
+   * Command Compositions
+   ********************/
 }
