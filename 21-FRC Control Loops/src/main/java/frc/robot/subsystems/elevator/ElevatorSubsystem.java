@@ -5,11 +5,9 @@
 package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,8 +16,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorSim elevatorSim =
       new ElevatorSim(DCMotor.getFalcon500Foc(2), 3, 20, 0.0125, 0, 2, true, 0);
 
-  private double targetHeight = 0;
-
+  private double targetHeight = 0.0;
 
   public ElevatorSubsystem() {}
 
@@ -28,7 +25,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     double currentHeight = getHeight();
     /* Bang-bang control */
 
+    // if (currentHeight > targetHeight) {
+    //   elevatorSim.setInputVoltage(-3.0);
+    // } else if (currentHeight < targetHeight) {
+    //   elevatorSim.setInputVoltage(3.0);
+    // } else elevatorSim.setInputVoltage(0);
+
     /* Proportional control */
+    double error = targetHeight - currentHeight;
+    double kP = 500;
+    double voltage = kP * error;
+    elevatorSim.setInputVoltage(voltage);
 
     /* Trapezoidal Profile */
 
@@ -39,6 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     DogLog.log("Elevator/Height (Meters)", getHeight());
     DogLog.log("Elevator/Target Height (Meters)", targetHeight);
+    // DogLog.log("Elevator/Voltage", voltage);
 
     elevatorSim.update(.020);
     updateVisualizer();
