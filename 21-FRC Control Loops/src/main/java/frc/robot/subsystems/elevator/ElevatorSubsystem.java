@@ -5,11 +5,9 @@
 package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,15 +18,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double targetHeight = 0;
 
-
   public ElevatorSubsystem() {}
 
   @Override
   public void periodic() {
     double currentHeight = getHeight();
     /* Bang-bang control */
+    // if (currentHeight > targetHeight) {
+    //  elevatorSim.setInputVoltage(-3);
+    // } else if (currentHeight < targetHeight) {
+    //   elevatorSim.setInputVoltage(3);
+    // } else {
+    //   elevatorSim.setInputVoltage(0);
+    // }
 
     /* Proportional control */
+    double error = targetHeight - currentHeight;
+    double kP = 50;
+    double voltage = kP * error;
+    elevatorSim.setInputVoltage(voltage);
 
     /* Trapezoidal Profile */
 
