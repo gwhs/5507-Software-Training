@@ -46,14 +46,18 @@ public class RobotContainer {
 
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
-
+    private final SendableChooser<Command> autoChooser = newSendableChooser<Command>(); 
+    autoChooser.addOption("Choreo", new Choreo.java());
 
     // TODO: Published the autonomous routine chooser to SmartDashboard
-    
+    SmartDashboard.putData("autonomous", autoChooser); 
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
     // TODO: return the command chosen instead
+    public Command getAutonomousCommand() {
+      return autoChooser.getSelected();
+    }  
   }
 }

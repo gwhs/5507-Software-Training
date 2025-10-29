@@ -41,10 +41,11 @@ public class RobotContainer {
     controller.x().onTrue(elevator.runHeight(0));
 
     // TODO 1: press left bumper: set arm angle to 120
-
+    controller.leftBumper().onTrue(arm.setAngle(120))
     // TODO 2: press right bumper -> set arm angle to -90
-
+    controller.rightBumper().onTrue(arm.setAngle(-90))
     // TODO 3: press start -> score L4 Coral
+    controller.start().onTrue(scoreL4Coral())
     // ↓↓↓↓↓↓↓↓↓↓ COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST ↓↓↓↓↓↓↓↓↓↓
 
   }
@@ -59,6 +60,18 @@ public class RobotContainer {
   public Command scoreL4Coral() {
     return Commands.sequence(
         // TODO:
+        Commands.parallel(
+          elevator.setHeight(ElevatorConstants.L4_PREP_POSITION),
+          arm.setAngle(ArmConstants.L4_PREP_POSITION)
+        ),
+      endeffector.setVoltage(EndEffectorConstants.VOLTAGE_L4)
+      Commands.waitSeconds(0.05)
+      Commands.parallel(
+        elevator.runHeight(ElevatorConstants.STOW_METER)
+        arm.runAngle(ArmConstants.ARM_STOW_ANGLE)
+        endEffector.setVoltage(0)
+      )
+
         // Command 1: In parallel: (Commands.parallel())
         //     Command 1a: extend elevator to ElevatorConstants.L4_PREP_POSITION
         //     Command 1b: rotate arm to ArmConstants.L4_PREP_POSITION

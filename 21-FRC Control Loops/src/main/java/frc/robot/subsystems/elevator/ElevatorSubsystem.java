@@ -14,12 +14,13 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ElevatorSubsystem extends SubsystemBase {
-  private ElevatorSim elevatorSim =
+public class ElevatorSubsystem extends SubsystemBase  
       new ElevatorSim(DCMotor.getFalcon500Foc(2), 3, 20, 0.0125, 0, 2, true, 0);
 
   private double targetHeight = 0;
 
+  private ProfiledPIDController controller = 
+      new ProfiledPIDController(50, 0, 0, new Constraints(0.1, 0.1));
 
   public ElevatorSubsystem() {}
 
