@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.autonomous.Auto_USETHIS;
 import frc.robot.subsystems.RobotVisualizer;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -31,6 +33,8 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureAutoChooser();
+    autoChooser.addOption("Auto_USETHIS", new Auto_USETHIS());
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   private void configureBindings() {
@@ -47,13 +51,13 @@ public class RobotContainer {
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
 
-
     // TODO: Published the autonomous routine chooser to SmartDashboard
-    
+
   }
 
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-    // TODO: return the command chosen instead
+    return autoChooser.getSelected();
   }
 }
