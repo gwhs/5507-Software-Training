@@ -23,8 +23,7 @@ public class Auto_USETHIS extends SequentialCommandGroup {
       PathPlannerPath C_CS = PathPlannerPath.fromChoreoTrajectory("C-CS");
 
       Pose2d startingPose =
-          new Pose2d(
-            S_F.getPoint(0).position, S_F.getIdealStartingState().rotation());
+          new Pose2d(S_F.getPoint(0).position, S_F.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
