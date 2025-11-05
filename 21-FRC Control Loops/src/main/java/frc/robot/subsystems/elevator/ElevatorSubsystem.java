@@ -20,6 +20,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double targetHeight = 0;
 
+  private ProfiledPIDController controller =
+      new ProfiledPIDController(100, 0, 0, new Constraints(0.1, 0.1));
 
   public ElevatorSubsystem() {}
 
@@ -31,6 +33,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     /* Proportional control */
 
     /* Trapezoidal Profile */
+    double output = controller.calculate(currentHeight);
+    elevatorSim.setInputVoltage(output);
 
     /* Velocity Feedforward */
 
@@ -39,6 +43,9 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     DogLog.log("Elevator/Height (Meters)", getHeight());
     DogLog.log("Elevator/Target Height (Meters)", targetHeight);
+
+    DogLog.log("Elevator/Profiled Position", controller.getSetpoint().position);
+    DogLog.log("Elevator/Profiled Velocity", controller.getSetpoint().velocity);
 
     elevatorSim.update(.020);
     updateVisualizer();
@@ -57,6 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return this.runOnce(
         () -> {
           this.targetHeight = targetHeight;
+          controller.setGoal(targetHeight);
         });
   }
 
