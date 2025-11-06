@@ -14,8 +14,6 @@ import frc.robot.subsystems.swerve.TunerConstants_Comp;
 public class RobotContainer {
   private final SwerveSubsystem swerve = TunerConstants_Comp.createDrivetrain();
   private final DummySubsystem dummy = new DummySubsystem();
-  // private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm,
-  // groundIntake);
 
   private final CommandXboxController controller = new CommandXboxController(0);
 
