@@ -5,9 +5,11 @@
 package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +21,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double targetHeight = 0;
 
   public ElevatorSubsystem() {}
+
+  private ProfiledPIDController controller =
+      new ProfiledPIDController(500, 0, 0, new Constraints(0.1, 0.1));
 
   @Override
   public void periodic() {
@@ -33,13 +38,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     // }
 
     /* Proportional control */
-    double error = targetHeight - currentHeight;
-    double kP = 50;
-    double voltage = kP * error;
-    elevatorSim.setInputVoltage(voltage);
+    // double error = targetHeight - currentHeight;
+    // double kP = 620;
+    // double voltage = kP * error;
+    // elevatorSim.setInputVoltage(voltage);
 
     /* Trapezoidal Profile */
-
+    double output = controller.calculate(currentHeight);
+    elevatorSim.setInputVoltage(output);
     /* Velocity Feedforward */
 
     /*
@@ -47,6 +53,9 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     DogLog.log("Elevator/Height (Meters)", getHeight());
     DogLog.log("Elevator/Target Height (Meters)", targetHeight);
+
+    DogLog.log("Elevator/Profiled Position", controller.getSetpoint().position);
+    DogLog.log("Elevator/Profiled Velocity", controller.getSetpoint().velocity);
 
     elevatorSim.update(.020);
     updateVisualizer();
@@ -65,6 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return this.runOnce(
         () -> {
           this.targetHeight = targetHeight;
+          controller.setGoal(targetHeight);
         });
   }
 
