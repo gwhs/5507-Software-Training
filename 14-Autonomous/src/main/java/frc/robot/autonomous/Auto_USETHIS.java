@@ -27,7 +27,11 @@ public class Auto_USETHIS extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(S_F)
+          AutoBuilder.followPath(S_F),
+          AutoBuilder.followPath(F_CS),
+          AutoBuilder.followPath(CS_C),
+          AutoBuilder.followPath(C_CS)
+
           /*
            * TODO: The rest of the autonomous routine command
            */
