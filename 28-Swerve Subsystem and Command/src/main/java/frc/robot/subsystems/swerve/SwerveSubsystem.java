@@ -12,12 +12,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
@@ -43,6 +46,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
       new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(DriveRequestType.Velocity);
+
+  private double translationSlowFactor = 1;
+  private double rotationSlowFactor = 1;
+  private boolean slowMode = false;
+
+  private final double defaultSlowFactor = 0.25;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -135,10 +144,31 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   public Command setSlowMode(boolean enable) {
-
+    return Commands.runOnce(() -> {
+      this.slowMode = enable;
+      this.translationSlowFactor = defaultSlowFactor;
+      this.rotationSlowFactor = defaultSlowFactor;
+    });
   }
 
   public Command setSlowMode(double translationSlowFactor, double rotationSlowFactor) {
-    
+    return Commands.runOnce(() -> {
+      this.slowMode = true;
+      this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+      this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+    });
+  }
+
+
+  public boolean isSlowMode() {
+    return slowMode;
+  }
+
+  public double getTranslationSlowFactor() {
+    return translationSlowFactor;
+  }
+
+  public double getRotationalSlowFactor() {
+    return rotationSlowFactor;
   }
 }

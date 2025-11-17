@@ -44,6 +44,13 @@ public class DriveCommand extends Command {
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
 
+    // Slow Mode
+    if(drivetrain.isSlowMode()) {
+      xInput = xInput * drivetrain.getTranslationSlowFactor();
+      yInput = yInput * drivetrain.getTranslationSlowFactor();
+      rotationInput = rotationInput * drivetrain.getRotationalSlowFactor();
+    }
+
     double xVelocity = xInput * maxSpeed;
     double yVelocity = yInput * maxSpeed;
     double rotationVelocity = rotationInput * maxAngularSpeed;
