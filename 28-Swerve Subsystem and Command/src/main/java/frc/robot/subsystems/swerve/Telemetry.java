@@ -15,10 +15,8 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 
 public class Telemetry {
-  /**
-   * @param maxSpeed Maximum speed in meters per second
-   */
-  public Telemetry(double maxSpeed) {
+
+  public Telemetry() {
     SignalLogger.start();
   }
 
