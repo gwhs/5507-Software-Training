@@ -34,8 +34,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureAutoChooser();
-
-    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   private void configureBindings() {
@@ -54,7 +52,7 @@ public class RobotContainer {
     // TODO: Add your autonomous routine to the auto chooser
     autoChooser.addOption("Auto Coral", new Auto_Coral());
     // TODO: Published the autonomous routine chooser to SmartDashboard
-
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   public Command getAutonomousCommand() {

@@ -16,7 +16,7 @@ public class Auto_Coral extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
+      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("Start-F");
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
       PathPlannerPath Start_F = PathPlannerPath.fromChoreoTrajectory("Start-F");
       PathPlannerPath F_CS = PathPlannerPath.fromChoreoTrajectory("F-CS");
@@ -28,7 +28,7 @@ public class Auto_Coral extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          // AutoBuilder.followPath(startingPath),
+          AutoBuilder.followPath(startingPath),
           /*
            * TODO: The rest of the autonomous routine command
            */
