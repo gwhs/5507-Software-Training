@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class Template extends SequentialCommandGroup {
-  public Template() {
+public class Auto_Coral extends SequentialCommandGroup {
+  public Auto_Coral() {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -18,18 +18,24 @@ public class Template extends SequentialCommandGroup {
       */
       PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
-
+      PathPlannerPath Start_F = PathPlannerPath.fromChoreoTrajectory("Start-F");
+      PathPlannerPath F_CS = PathPlannerPath.fromChoreoTrajectory("F-CS");
+      PathPlannerPath CS_C = PathPlannerPath.fromChoreoTrajectory("CS-C");
+      PathPlannerPath C_CS = PathPlannerPath.fromChoreoTrajectory("C-CS");
       Pose2d startingPose =
           new Pose2d(
               startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(startingPath)
+          // AutoBuilder.followPath(startingPath),
           /*
            * TODO: The rest of the autonomous routine command
            */
-          );
+          AutoBuilder.followPath(Start_F),
+          AutoBuilder.followPath(F_CS),
+          AutoBuilder.followPath(CS_C),
+          AutoBuilder.followPath(C_CS));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
