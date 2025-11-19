@@ -1,0 +1,101 @@
+package frc.robot.autonomous;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.arm.ArmConstants;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EndEffectorConstants;
+import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
+import frc.robot.subsystems.groundIntake.GroundIntakeConstants;
+import frc.robot.subsystems.groundIntake.GroundIntakeSubsystem;
+
+public class Auto_Coral extends SequentialCommandGroup {
+  public Auto_Coral(
+      ArmSubsystem arm,
+      ElevatorSubsystem elevator,
+      EndEffectorSubsystem endEffector,
+      GroundIntakeSubsystem groundIntake) {
+
+    /* All your code should go inside this try-catch block */
+    try {
+
+      /*
+        TODO: Load Paths
+      */
+
+      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
+      PathPlannerPath Start_F = PathPlannerPath.fromChoreoTrajectory("Start-F");
+      PathPlannerPath F_CS = PathPlannerPath.fromChoreoTrajectory("F-CS");
+      PathPlannerPath CS_C = PathPlannerPath.fromChoreoTrajectory("CS-C");
+      PathPlannerPath C_CS = PathPlannerPath.fromChoreoTrajectory("C-CS");
+      PathPlannerPath CS_D = PathPlannerPath.fromChoreoTrajectory("CS-D");
+      PathPlannerPath D_CS = PathPlannerPath.fromChoreoTrajectory("D-CS");
+      PathPlannerPath CS_E = PathPlannerPath.fromChoreoTrajectory("CS-E");
+      PathPlannerPath E_CS = PathPlannerPath.fromChoreoTrajectory("E-CS");
+      Pose2d startingPose =
+          new Pose2d(Start_F.getPoint(0).position, Start_F.getIdealStartingState().rotation());
+
+      addCommands(
+          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+          /*
+           * TODO: The rest of the autonomous routine command
+           */
+          AutoBuilder.followPath(Start_F)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+                  arm.runAngle(ArmConstants.L4_PREP_POSITION),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.CORAL_STOW_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+          AutoBuilder.followPath(F_CS)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
+                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.INTAKE_CORAL_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
+          AutoBuilder.followPath(CS_C)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+                  arm.runAngle(ArmConstants.L4_PREP_POSITION),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.CORAL_STOW_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+          AutoBuilder.followPath(C_CS)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
+                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.INTAKE_CORAL_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
+          AutoBuilder.followPath(CS_D)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+                  arm.runAngle(ArmConstants.L4_PREP_POSITION),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.CORAL_STOW_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+          AutoBuilder.followPath(D_CS)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
+                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.INTAKE_CORAL_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
+          AutoBuilder.followPath(CS_E)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+                  arm.runAngle(ArmConstants.L4_PREP_POSITION),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.CORAL_STOW_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+          AutoBuilder.followPath(E_CS)
+              .deadlineFor(
+                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
+                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE),
+                  groundIntake.setAngleAndAmp(GroundIntakeConstants.INTAKE_CORAL_ANGLE, 0, 0)),
+          endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE));
+    } catch (Exception e) {
+      DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
+    }
+  }
+}

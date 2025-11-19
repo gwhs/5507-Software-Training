@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.autonomous.Auto_Coral;
 import frc.robot.subsystems.RobotVisualizer;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -25,6 +27,7 @@ public class RobotContainer {
   private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
 
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   // TODO: Create the autonomous routine chooser
 
@@ -37,6 +40,7 @@ public class RobotContainer {
     swerve.setDefaultCommand(swerve.defaultDrive(controller));
 
     /********************
+     *
      * Button Bindings
      ********************/
     controller.a().onTrue(elevator.runHeight(0.3));
@@ -46,13 +50,13 @@ public class RobotContainer {
 
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
-
+    autoChooser.addOption("Auto Coral", new Auto_Coral(arm, elevator, endEffector, groundIntake));
     // TODO: Published the autonomous routine chooser to SmartDashboard
-
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.getSelected();
     // TODO: return the command chosen instead
   }
 }

@@ -78,8 +78,7 @@ public class RobotContainer {
             //     Command 4c: spin endeffector at 0 volts
             Commands.parallel(
                     elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
-                    arm.runAngle(ArmConstants.L4_PREP_POSITION))
-                .withTimeout(0.5),
+                    arm.runAngle(ArmConstants.L4_PREP_POSITION)),
             endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
             Commands.waitSeconds(0.05),
             Commands.parallel(
