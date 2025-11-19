@@ -50,7 +50,7 @@ public class RobotContainer {
 
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
-    autoChooser.addOption("Auto Coral", new Auto_Coral());
+    autoChooser.addOption("Auto Coral", new Auto_Coral(arm, elevator, endEffector, groundIntake));
     // TODO: Published the autonomous routine chooser to SmartDashboard
     SmartDashboard.putData("autonomous", autoChooser);
   }
