@@ -6,16 +6,20 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.RobotVisualizer;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbConstants;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EndEffectorConstants;
 import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
+import frc.robot.subsystems.groundIntake.GroundIntakeConstants;
 import frc.robot.subsystems.groundIntake.GroundIntakeSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Comp;
@@ -26,6 +30,7 @@ public class RobotContainer {
   private final ArmSubsystem arm = new ArmSubsystem();
   private final GroundIntakeSubsystem groundIntake = new GroundIntakeSubsystem();
   private final EndEffectorSubsystem endEffector = new EndEffectorSubsystem();
+  private final ClimbSubsystem climb = new ClimbSubsystem();
 
   private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
 
@@ -43,6 +48,7 @@ public class RobotContainer {
     /********************
      * Button Bindings
      ********************/
+    controller.a().onTrue(elevator.runHeight(0.3));
     controller.b().onTrue(elevator.runHeight(.75));
     controller.x().onTrue(elevator.runHeight(0));
 
@@ -52,9 +58,11 @@ public class RobotContainer {
     controller.rightBumper().onTrue(arm.runAngle(-90));
     // TODO 3: press start -> score L4 Coral
     // ↓↓↓↓↓↓↓↓↓↓ COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST ↓↓↓↓↓↓↓↓↓↓
+
     controller.start().and(controller.back()).debounce(1).onTrue(scoreL4Coral());
     controller.start().and(controller.back().negate()).debounce(1).onTrue(arm.runAngle(90));
     controller.back().and(controller.start().negate().debounce(1).onTrue(arm.runAngle(-80)));
+    controller.y().onTrue(Climb());
   }
 
   public Command getAutonomousCommand() {
@@ -86,6 +94,22 @@ public class RobotContainer {
                 elevator.runHeight(ElevatorConstants.STOW_METER),
                 arm.runAngle(ArmConstants.ARM_STOW_ANGLE),
                 endEffector.runVoltage(0).withTimeout(0.01)))
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         .withName("ScoreL4Coral");
+  }
+
+  public Command Climb() {
+    return Commands.sequence(
+            Commands.parallel(
+                elevator.runHeight(0),
+                arm.runAngle(ArmConstants.PREP_CLIMB_ANGLE),
+                groundIntake.setAngleAndAmp(GroundIntakeConstants.CLIMB_ANGLE, 0, 0),
+                endEffector.runVoltage(0)),
+            climb.runPosition(ClimbConstants.LATCH_CLIMB_POSITION),
+            Commands.waitUntil(controller.start()),
+            climb.runPosition(ClimbConstants.CLIMB_CLIMB_POSITION),
+            Commands.idle())
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+        .withName("Climb");
   }
 }
