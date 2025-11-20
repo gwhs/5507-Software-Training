@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.groundIntake.GroundIntakeSubsystem;
@@ -19,7 +20,10 @@ public class RobotVisualizer extends SubsystemBase {
   private final GroundIntakeSubsystem groundIntake;
 
   public RobotVisualizer(
-      ElevatorSubsystem elevator, ArmSubsystem arm, GroundIntakeSubsystem groundIntake) {
+      RobotContainer robotContainer,
+      ElevatorSubsystem elevator,
+      ArmSubsystem arm,
+      GroundIntakeSubsystem groundIntake) {
     this.elevator = elevator;
     this.arm = arm;
     this.groundIntake = groundIntake;

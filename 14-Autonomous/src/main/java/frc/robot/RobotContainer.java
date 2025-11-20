@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.autonomous.Auto_Coral;
 import frc.robot.subsystems.RobotVisualizer;
@@ -24,7 +25,8 @@ public class RobotContainer {
   private final GroundIntakeSubsystem groundIntake = new GroundIntakeSubsystem();
   private final EndEffectorSubsystem endEffector = new EndEffectorSubsystem();
 
-  private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
+  private final RobotVisualizer robotVisualizer =
+      new RobotVisualizer(null, elevator, arm, groundIntake);
 
   private final CommandXboxController controller = new CommandXboxController(0);
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -50,7 +52,7 @@ public class RobotContainer {
 
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
-    autoChooser.addOption("Auto Coral", new Auto_Coral(arm, elevator, endEffector));
+    autoChooser.addOption("Auto Coral", new Auto_Coral(this, arm, elevator, endEffector));
     // TODO: Published the autonomous routine chooser to SmartDashboard
     SmartDashboard.putData("autonomous", autoChooser);
   }
@@ -58,5 +60,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
     // TODO: return the command chosen instead
+  }
+
+  public Command prepScoreCoral(double elevatorHeight, double armAngle) {
+    return Commands.sequence(
+            Commands.parallel(elevator.runHeight(elevatorHeight), arm.runAngle(armAngle)))
+        .withName("Prep Score Coral");
   }
 }
