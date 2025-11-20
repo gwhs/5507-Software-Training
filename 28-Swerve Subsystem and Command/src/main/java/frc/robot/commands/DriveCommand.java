@@ -26,7 +26,11 @@ public class DriveCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double xInput = -controller.getLeftY();
+    double yInput = -controller.getLeftX();
+    double rotationInput = -controller.getRightX();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
