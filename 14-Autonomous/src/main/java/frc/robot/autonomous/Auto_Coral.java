@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -43,13 +44,19 @@ public class Auto_Coral extends SequentialCommandGroup {
            */
           AutoBuilder.followPath(Start_F)
               .deadlineFor(
-                  elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
-                  arm.runAngle(ArmConstants.L4_PREP_POSITION)),
+                  Commands.sequence(
+                      Commands.waitSeconds(0.5),
+                      Commands.parallel(
+                          elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+                          arm.runAngle(ArmConstants.L4_PREP_POSITION)))),
           endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
           AutoBuilder.followPath(F_CS)
               .deadlineFor(
-                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
-                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE)),
+                  Commands.sequence(
+                      Commands.waitSeconds(1),
+                      Commands.parallel(
+                          elevator.runHeight(ElevatorConstants.INTAKE_METER),
+                          arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE)))),
           endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
           AutoBuilder.followPath(CS_C)
               .deadlineFor(
