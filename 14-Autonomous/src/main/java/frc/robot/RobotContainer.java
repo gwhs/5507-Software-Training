@@ -33,7 +33,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureAutoChooser();
-    autoChooser.addOption("Auto_USETHIS", new Auto_USETHIS());
+    autoChooser.addOption("Auto_USETHIS", new Auto_USETHIS(arm, elevator, endEffector));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
