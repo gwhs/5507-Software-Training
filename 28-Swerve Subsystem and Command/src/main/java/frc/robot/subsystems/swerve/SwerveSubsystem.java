@@ -1,31 +1,23 @@
 package frc.robot.subsystems.swerve;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AlignToPose;
-
-import java.util.function.Supplier;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -33,15 +25,12 @@ import java.util.function.Supplier;
  */
 public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     implements Subsystem {
+
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
 
-  private double maxSpeed = TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond);
-  private double maxAngularRate = 2.5 * Math.PI;
-
-  private final Telemetry logger =
-      new Telemetry(TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond));
+  private final Telemetry logger = new Telemetry();
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -52,9 +41,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
-      new SwerveRequest.ApplyRobotSpeeds();
-
-  private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric();
+      new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(DriveRequestType.Velocity);
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -68,11 +55,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public SwerveSubsystem(
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
     super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
+
     configureAutoBuilder();
-    resetPose(new Pose2d(10, 3, Rotation2d.kZero));
     registerTelemetry(logger::telemeterize);
   }
 
@@ -106,6 +94,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
   }
 
+  private void startSimThread() {
+    m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+    /* Run simulation at a faster rate so PID gains behave more reasonably */
+    m_simNotifier =
+        new Notifier(
+            () -> {
+              final double currentTime = Utils.getCurrentTimeSeconds();
+              double deltaTime = currentTime - m_lastSimTime;
+              m_lastSimTime = currentTime;
+
+              /* use the measured time delta, get battery voltage from WPILib */
+              updateSimState(deltaTime, RobotController.getBatteryVoltage());
+            });
+    m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
   @Override
   public void periodic() {
     /*
@@ -126,45 +131,5 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-  }
-
-  private void startSimThread() {
-    m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-    /* Run simulation at a faster rate so PID gains behave more reasonably */
-    m_simNotifier =
-        new Notifier(
-            () -> {
-              final double currentTime = Utils.getCurrentTimeSeconds();
-              double deltaTime = currentTime - m_lastSimTime;
-              m_lastSimTime = currentTime;
-
-              /* use the measured time delta, get battery voltage from WPILib */
-              updateSimState(deltaTime, RobotController.getBatteryVoltage());
-            });
-    m_simNotifier.startPeriodic(kSimLoopPeriod);
-  }
-
-  public Command defaultDrive(CommandXboxController controller) {
-    return this.run(
-        () -> {
-          double xInput = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
-          double yInput = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
-          double rotInput = MathUtil.applyDeadband(-controller.getRightX(), 0.1);
-
-          double xVelocity = xInput * maxSpeed;
-          double yVelocity = yInput * maxSpeed;
-          double angularVelocity = rotInput * maxAngularRate;
-
-          this.setControl(
-              fieldCentricRequest
-                  .withVelocityX(xVelocity)
-                  .withVelocityY(yVelocity)
-                  .withRotationalRate(angularVelocity));
-        });
-  }
-
-  public Command alignToPose(Supplier<Pose2d> targetPose) {
-    return new AlignToPose(this, targetPose);
   }
 }
