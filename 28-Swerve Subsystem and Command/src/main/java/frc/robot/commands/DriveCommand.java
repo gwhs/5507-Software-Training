@@ -5,10 +5,14 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 public class DriveCommand extends Command {
   private final SwerveSubsystem drivetrain;
@@ -21,9 +25,13 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.1;
 
+  private final PIDController robotHeadingController = new PIDController(0.2, 0, 0);
+
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     this.drivetrain = drivetrain;
     this.controller = controller;
+
+    robotHeadingController.enableContinuousInput(-180, 180);
 
     addRequirements(drivetrain);
   }
@@ -43,6 +51,22 @@ public class DriveCommand extends Command {
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
+
+    // Auto Rotate
+    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
+    
+    if(drivetrain.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
+      double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
+
+      robotHeadingController.setSetpoint(drivetrain.getGoalHeading());
+
+      double pidOutput = robotHeadingController.calculate(currentRobotHeading);
+      rotationInput = pidOutput;
+
+      DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
+      DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
+      DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
+    }
 
     // Slow Mode
     if(drivetrain.isSlowMode()) {
