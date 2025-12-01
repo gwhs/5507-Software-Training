@@ -54,8 +54,8 @@ public class Auto_Coral extends SequentialCommandGroup {
           endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
           AutoBuilder.followPath(F_CS)
               .deadlineFor(
-                  elevator.runHeight(ElevatorConstants.INTAKE_METER),
-                  arm.runAngle(ArmConstants.ARM_INTAKE_ANGLE)),
+                  robotContainer.prepScoreCoral(
+                      ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE)),
           endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
           AutoBuilder.followPath(CS_C)
               .deadlineFor(
