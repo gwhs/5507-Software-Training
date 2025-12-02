@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.autonomous.Auto_Coral;
 import frc.robot.autonomous.Auto_Coral_Return;
-import frc.robot.autonomous.Test;
 import frc.robot.subsystems.RobotVisualizer;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -57,7 +56,6 @@ public class RobotContainer {
     autoChooser.addOption("Auto Coral", new Auto_Coral(this, arm, elevator, endEffector));
     autoChooser.setDefaultOption(
         "Auto Coral Return", new Auto_Coral_Return(this, arm, elevator, endEffector, swerve));
-    autoChooser.addOption("Test", new Test(this, arm, elevator, endEffector, swerve));
 
     // TODO: Published the autonomous routine chooser to SmartDashboard
     SmartDashboard.putData("autonomous", autoChooser);
