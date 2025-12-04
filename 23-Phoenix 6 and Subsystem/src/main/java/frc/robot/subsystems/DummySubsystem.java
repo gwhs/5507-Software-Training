@@ -70,8 +70,11 @@ public class DummySubsystem extends SubsystemBase {
   }
 
   public Command runVelocity(double vel) {
-    return this.runOnce(() -> {motor.setControl(velocityRequest.withVelocity(vel));});
-    }
+    return this.runOnce(
+        () -> {
+          motor.setControl(velocityRequest.withVelocity(vel));
+        });
+  }
 
   @Override
   public void periodic() {}
