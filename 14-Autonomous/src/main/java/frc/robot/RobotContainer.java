@@ -67,8 +67,12 @@ public class RobotContainer {
   }
 
   public Command prepScoreCoral(double elevatorHeight, double armAngle) {
-    return Commands.sequence(
-            Commands.parallel(elevator.runHeight(elevatorHeight), arm.runAngle(armAngle)))
+    return Commands.parallel(elevator.runHeight(elevatorHeight), arm.runAngle(armAngle))
         .withName("Prep Score Coral");
+  }
+
+  public Command prepIntake(double elevatorHeight, double armAngle) {
+    return Commands.parallel(elevator.runHeight(elevatorHeight), arm.runAngle(armAngle))
+        .withName("Prep Intake");
   }
 }

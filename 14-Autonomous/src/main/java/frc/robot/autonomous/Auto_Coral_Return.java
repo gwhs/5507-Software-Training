@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
@@ -33,13 +34,13 @@ public class Auto_Coral_Return extends SequentialCommandGroup {
       */
 
       PathPlannerPath Start_F = PathPlannerPath.fromChoreoTrajectory("Start-F");
-      // PathPlannerPath F_CS = PathPlannerPath.fromChoreoTrajectory("F-CS");
+      PathPlannerPath F_CS = PathPlannerPath.fromChoreoTrajectory("F-CS");
       PathPlannerPath CS_C = PathPlannerPath.fromChoreoTrajectory("CS-C");
-      // PathPlannerPath C_CS = PathPlannerPath.fromChoreoTrajectory("C-CS");
+      PathPlannerPath C_CS = PathPlannerPath.fromChoreoTrajectory("C-CS");
       PathPlannerPath CS_D = PathPlannerPath.fromChoreoTrajectory("CS-D");
-      // PathPlannerPath D_CS = PathPlannerPath.fromChoreoTrajectory("D-CS");
+      PathPlannerPath D_CS = PathPlannerPath.fromChoreoTrajectory("D-CS");
       PathPlannerPath CS_E = PathPlannerPath.fromChoreoTrajectory("CS-E");
-      // PathPlannerPath E_CS = PathPlannerPath.fromChoreoTrajectory("E-CS");
+      PathPlannerPath E_CS = PathPlannerPath.fromChoreoTrajectory("E-CS");
       Pose2d startingPose =
           new Pose2d(Start_F.getPoint(0).position, Start_F.getIdealStartingState().rotation());
 
@@ -49,98 +50,62 @@ public class Auto_Coral_Return extends SequentialCommandGroup {
            * TODO: The rest of the autonomous routine command
            */
           Commands.sequence(
-              Commands.sequence(
-                  AutoBuilder.followPath(Start_F)
-                      .deadlineFor(
-                          Commands.sequence(
-                              Commands.waitSeconds(1.6 - 1.3),
-                              robotContainer.prepScoreCoral(
-                                  ElevatorConstants.L4_PREP_POSITION,
-                                  ArmConstants.L4_PREP_POSITION))),
-                  endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4)),
-              drivetrain
-                  .alignToPose(() -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose))
-                  .withDeadline(
-                      Commands.race(
-                          Commands.waitSeconds(2.3),
-                          Commands.waitUntil(() -> endEffector.hasGamePiece())))
+              AutoBuilder.followPath(Start_F)
                   .deadlineFor(
-                      endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
                       robotContainer.prepScoreCoral(
-                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))),
-          Commands.sequence(
-              Commands.sequence(
-                  AutoBuilder.followPath(CS_C)
-                      .deadlineFor(
-                          Commands.sequence(
-                              Commands.waitSeconds(2.0 - 1.3),
-                              robotContainer.prepScoreCoral(
-                                  ElevatorConstants.L4_PREP_POSITION,
-                                  ArmConstants.L4_PREP_POSITION)))
-                      .raceWith(
-                          Commands.waitSeconds(0.5)
-                              .andThen(Commands.idle().onlyIf(() -> endEffector.hasGamePiece()))),
-                  endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4)),
-              drivetrain
-                  .alignToPose(() -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose))
-                  .withDeadline(
-                      Commands.race(
-                          Commands.waitSeconds(2.3),
-                          Commands.waitUntil(() -> endEffector.hasGamePiece())))
+                          ElevatorConstants.L4_PREP_POSITION, ArmConstants.L4_PREP_POSITION)),
+              endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+              AutoBuilder.followPath(F_CS)
                   .deadlineFor(
-                      endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
-                      robotContainer.prepScoreCoral(
-                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))),
-          // Commands.waitUntil(() -> endEffector.hasGamePiece()),
-          Commands.sequence(
-              Commands.sequence(
-                  AutoBuilder.followPath(CS_D)
-                      .deadlineFor(
-                          Commands.sequence(
-                              Commands.waitSeconds(2.1 - 1.3),
-                              robotContainer.prepScoreCoral(
-                                  ElevatorConstants.L4_PREP_POSITION,
-                                  ArmConstants.L4_PREP_POSITION)))
-                      .raceWith(
-                          Commands.waitSeconds(0.5)
-                              .andThen(Commands.idle().onlyIf(() -> endEffector.hasGamePiece()))),
-                  endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4)),
-              drivetrain
-                  .alignToPose(() -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose))
-                  .withDeadline(
-                      Commands.race(
-                          Commands.waitSeconds(2.3),
-                          Commands.waitUntil(() -> endEffector.hasGamePiece())))
-                  .deadlineFor(
-                      endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
-                      robotContainer.prepScoreCoral(
-                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))),
-          // Commands.waitUntil(() -> endEffector.hasGamePiece()),
-          Commands.sequence(
-              Commands.sequence(
-                  AutoBuilder.followPath(CS_E)
-                      .deadlineFor(
-                          Commands.sequence(
-                              Commands.waitSeconds(2.3 - 1.3),
-                              robotContainer.prepScoreCoral(
-                                  ElevatorConstants.L4_PREP_POSITION,
-                                  ArmConstants.L4_PREP_POSITION)))
-                      .raceWith(
-                          Commands.waitSeconds(0.5)
-                              .andThen(Commands.idle().onlyIf(() -> endEffector.hasGamePiece()))),
-                  endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4)),
-              drivetrain
-                  .alignToPose(() -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose))
-                  .withDeadline(
-                      Commands.race(
-                          Commands.waitSeconds(2.3),
-                          Commands.waitUntil(() -> endEffector.hasGamePiece())))
-                  .deadlineFor(
-                      endEffector.runVoltage(EndEffectorConstants.INTAKE_CORAL_VOLTAGE),
-                      robotContainer.prepScoreCoral(
-                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))));
+                      robotContainer.prepIntake(
+                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE)),
+              autoHelper(CS_C, C_CS, robotContainer, drivetrain, endEffector),
+              autoHelper(CS_D, D_CS, robotContainer, drivetrain, endEffector),
+              autoHelper(CS_E, E_CS, robotContainer, drivetrain, endEffector)));
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
     }
+  }
+
+  public Command autoHelperTest(PathPlannerPath pathOne, PathPlannerPath pathTwo) {
+    return Commands.sequence(AutoBuilder.followPath(pathTwo), AutoBuilder.followPath(pathOne));
+  }
+
+  public Command autoHelper(
+      PathPlannerPath pathOne,
+      PathPlannerPath pathTwo,
+      RobotContainer robotContainer,
+      SwerveSubsystem drivetrain,
+      EndEffectorSubsystem endEffector) {
+    return Commands.sequence(
+        AutoBuilder.followPath(pathOne)
+            .raceWith(
+                Commands.waitSeconds(0.3)
+                    .andThen(Commands.idle().onlyIf(() -> endEffector.hasGamePiece())))
+            .deadlineFor(
+                Commands.sequence(
+                    Commands.waitSeconds(0.3),
+                    robotContainer.prepScoreCoral(
+                        ElevatorConstants.L4_PREP_POSITION, ArmConstants.L4_PREP_POSITION))),
+        Commands.sequence(
+                Commands.parallel(
+                        drivetrain.alignToPose(
+                            () -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose)),
+                        robotContainer.prepIntake(
+                            ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))
+                    .withTimeout(0.3),
+                AutoBuilder.followPath(pathOne)
+                    .deadlineFor(
+                        Commands.sequence(
+                            Commands.waitSeconds(0.7),
+                            robotContainer.prepScoreCoral(
+                                ElevatorConstants.L4_PREP_POSITION,
+                                ArmConstants.L4_PREP_POSITION))))
+            .onlyIf(() -> !endEffector.hasGamePiece()),
+        endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+        AutoBuilder.followPath(pathTwo)
+            .deadlineFor(
+                robotContainer.prepIntake(
+                    ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE)));
   }
 }
