@@ -50,25 +50,22 @@ public class Auto_Coral_Return extends SequentialCommandGroup {
            * TODO: The rest of the autonomous routine command
            */
           Commands.sequence(
-              AutoBuilder.followPath(Start_F)
-                  .deadlineFor(
-                      robotContainer.prepScoreCoral(
-                          ElevatorConstants.L4_PREP_POSITION, ArmConstants.L4_PREP_POSITION)),
-              endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
-              AutoBuilder.followPath(F_CS)
-                  .deadlineFor(
-                      robotContainer.prepIntake(
-                          ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE)),
+              Commands.sequence(
+                  AutoBuilder.followPath(Start_F)
+                      .deadlineFor(
+                          robotContainer.prepScoreCoral(
+                              ElevatorConstants.L4_PREP_POSITION, ArmConstants.L4_PREP_POSITION)),
+                  endEffector.runVoltage(EndEffectorConstants.VOLTAGE_L4),
+                  AutoBuilder.followPath(F_CS)
+                      .deadlineFor(
+                          robotContainer.prepIntake(
+                              ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))),
               autoHelper(CS_C, C_CS, robotContainer, drivetrain, endEffector),
               autoHelper(CS_D, D_CS, robotContainer, drivetrain, endEffector),
               autoHelper(CS_E, E_CS, robotContainer, drivetrain, endEffector)));
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
     }
-  }
-
-  public Command autoHelperTest(PathPlannerPath pathOne, PathPlannerPath pathTwo) {
-    return Commands.sequence(AutoBuilder.followPath(pathTwo), AutoBuilder.followPath(pathOne));
   }
 
   public Command autoHelper(
@@ -93,7 +90,8 @@ public class Auto_Coral_Return extends SequentialCommandGroup {
                             () -> EagleUtil.getClosestCoralStation(drivetrain.getState().Pose)),
                         robotContainer.prepIntake(
                             ElevatorConstants.INTAKE_METER, ArmConstants.ARM_INTAKE_ANGLE))
-                    .withTimeout(0.3),
+                    .withTimeout(0.4),
+                Commands.waitUntil(() -> endEffector.hasGamePiece()),
                 AutoBuilder.followPath(pathOne)
                     .deadlineFor(
                         Commands.sequence(
