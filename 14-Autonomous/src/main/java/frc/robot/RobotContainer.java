@@ -47,9 +47,8 @@ public class RobotContainer {
   private void configureAutoChooser() {
     // TODO: Add your autonomous routine to the auto chooser
 
-
     // TODO: Published the autonomous routine chooser to SmartDashboard
-    
+
   }
 
   public Command getAutonomousCommand() {

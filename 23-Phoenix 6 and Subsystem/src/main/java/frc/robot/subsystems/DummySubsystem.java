@@ -28,6 +28,10 @@ public class DummySubsystem extends SubsystemBase {
     SmartDashboard.putData("put 10 amp", runCurrent(10, 1));
     SmartDashboard.putData("put 10,0.2 amp", runCurrent(10, 0.2));
     SmartDashboard.putData("put -10 amp", runCurrent(-10, 0.2));
+    SmartDashboard.putData("put 0.2 vel", runVelocity(0.2));
+    SmartDashboard.putData("put 1 vel", runVelocity(1));
+    SmartDashboard.putData("put 5 vel", runVelocity(5));
+    SmartDashboard.putData("put -0.2 vel", runVelocity(-0.2));
 
     motorConf.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motorConf.Audio.BeepOnConfig = true;
@@ -44,7 +48,7 @@ public class DummySubsystem extends SubsystemBase {
     motorConf.Slot0.kG = 0;
     motorConf.Slot0.kA = 0;
     motorConf.Slot0.kV = 0.1125;
-    motorConf.Slot0.kP = 0;
+    motorConf.Slot0.kP = 1.2;
     motorConf.Slot0.kI = 0;
     motorConf.Slot0.kD = 0;
     StatusCode status = StatusCode.StatusCodeNotInitialized;
