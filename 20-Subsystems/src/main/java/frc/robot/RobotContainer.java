@@ -27,8 +27,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
-
-  /********************
-   * Command Compositions
-   ********************/
 }
