@@ -34,14 +34,10 @@ public class RobotContainer {
      * Button Bindings
      ********************/
     // TODO: Press right trigger to shoot balls (end with semicolon ;)
-    // vvvvv YOUR CODE GOES HERE vvvvv
 
-    // ^^^^^                     ^^^^^
 
     // TODO: Release right trigger to stop shooting balls (end with semicolon ;)
-    // vvvvv YOUR CODE GOES HERE vvvvv
 
-    // ^^^^^                     ^^^^^
 
     // Example: 
     // Press left trigger to deploy ground intake
@@ -57,28 +53,19 @@ public class RobotContainer {
   public Command shootBall() {
     return Commands.parallel(
         // TODO: Run shooter at 40 rotations per second (end with comma ,)
-        // vvvvv YOUR CODE GOES HERE vvvvv
-
-        // ^^^^^                     ^^^^^
 
         // TODO: Run indexer at 10 volts
-        // vvvvv YOUR CODE GOES HERE vvvvv
 
-        // ^^^^^                     ^^^^^
         );
   }
 
   public Command stopShooting() {
     return Commands.parallel(
         // TODO: Stop shooter (add comma , at the end) (end with comma ,)
-        // vvvvv YOUR CODE GOES HERE vvvvv
 
-        // ^^^^^                     ^^^^^
 
         // TODO: Stop indexer
-        // vvvvv YOUR CODE GOES HERE vvvvv
 
-        // ^^^^^                     ^^^^^
         );
   }
 
