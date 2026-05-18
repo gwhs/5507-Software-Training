@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.autonomous.BasicAuton;
 import frc.robot.subsystems.groundIntakePivot.GroundIntakePivotSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -21,10 +23,14 @@ public class RobotContainer {
   private final GroundIntakePivotSubsystem groundIntakePivot = new GroundIntakePivotSubsystem();
   private final GroundIntakeRollerSubsystem groundIntakeRoller = new GroundIntakeRollerSubsystem();
 
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   private final CommandXboxController controller = new CommandXboxController(0);
 
   public RobotContainer() {
     configureBindings();
+
+    autoChooser.setDefaultOption("Basic Auton", new BasicAuton(shooter, indexer, groundIntakePivot, groundIntakeRoller));
   }
 
   private void configureBindings() {
@@ -63,7 +69,6 @@ public class RobotContainer {
     return Commands.parallel(
         // TODO: Stop shooter (add comma , at the end) (end with comma ,)
 
-
         // TODO: Stop indexer
 
         );
@@ -78,5 +83,9 @@ public class RobotContainer {
 
   public Command stopGroundIntake() {
     return groundIntakeRoller.stopIntake();
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
   }
 }
