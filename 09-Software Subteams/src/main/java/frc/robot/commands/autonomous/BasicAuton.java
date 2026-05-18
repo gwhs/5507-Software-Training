@@ -23,15 +23,15 @@ public class BasicAuton extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("path1");
+      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("path_1");
 
       addCommands(
-          AutoBuilder.resetOdom(startingPath.getStartingHolonomicPose().get())
-          /*
-           * TODO: The rest of the autonomous routine command
-           */
+        AutoBuilder.resetOdom(startingPath.getStartingHolonomicPose().get())
+        /*
+        * TODO: The rest of the autonomous routine command
+        */
 
-          );
+      );
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
