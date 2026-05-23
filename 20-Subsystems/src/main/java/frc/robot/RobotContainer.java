@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusSignalCollection;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,6 +15,9 @@ public class RobotContainer {
 
   private final CANBus rioBus = new CANBus("rio");
   private final CANBus canivoreBus = new CANBus("CAN_Network");
+
+  private final StatusSignalCollection rioBusCollection = new StatusSignalCollection();
+  private final StatusSignalCollection canivoreBusCollection = new StatusSignalCollection();
 
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -26,5 +30,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public void periodic() {
+    rioBusCollection.refreshAll();
+    canivoreBusCollection.refreshAll();
   }
 }

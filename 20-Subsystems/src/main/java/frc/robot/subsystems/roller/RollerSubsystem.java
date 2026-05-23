@@ -4,10 +4,11 @@
 
 package frc.robot.subsystems.roller;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,14 +26,12 @@ public class RollerSubsystem extends SubsystemBase {
 
   private final Alert motorNotConnectedAlert = new Alert("Roller Motor Not Connected", AlertType.kError);
 
-  private final VelocityVoltage VelocityRequest = new VelocityVoltage(0);
-
   private final StatusSignal<Voltage> motorVoltage;
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Current> motorStatorCurrent;
 
   /** Creates a new ShooterSubsystem. */
-  public RollerSubsystem(CANBus canBus) {
+  public RollerSubsystem(CANBus canBus, StatusSignalCollection collection) {
     motor = new TalonFX(40, canBus);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -43,15 +42,15 @@ public class RollerSubsystem extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.StatorCurrentLimit = 40;
 
-    config.Slot0.kS = 0.1;
-    config.Slot0.kV = 0.1125;
-    config.Slot0.kP = 2;
-
     motor.getConfigurator().apply(config);
 
     motorVoltage = motor.getMotorVoltage();
     motorTemp = motor.getDeviceTemp();
     motorStatorCurrent = motor.getStatorCurrent();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent);
+
+    collection.addSignals(motorVoltage, motorTemp, motorStatorCurrent);
   }
 
   @Override
@@ -63,12 +62,6 @@ public class RollerSubsystem extends SubsystemBase {
   public Command runVoltage(double volt) {
     return this.runOnce(() -> {
       motor.setVoltage(volt);
-    });
-  }
-
-  public Command runVelocity (double rps) {
-    return this.runOnce(() -> {
-      motor.setControl(VelocityRequest.withVelocity(rps));
     });
   }
 }
