@@ -16,9 +16,6 @@ public class RobotContainer {
   private final CANBus rioBus = new CANBus("rio");
   private final CANBus canivoreBus = new CANBus("CAN_Network");
 
-  private final StatusSignalCollection rioBusCollection = new StatusSignalCollection();
-  private final StatusSignalCollection canivoreBusCollection = new StatusSignalCollection();
-
   private final CommandXboxController controller = new CommandXboxController(0);
 
   public RobotContainer() {
@@ -33,7 +30,5 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    rioBusCollection.refreshAll();
-    canivoreBusCollection.refreshAll();
   }
 }
