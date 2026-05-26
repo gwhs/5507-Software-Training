@@ -4,19 +4,26 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class RobotContainer {
 
   private final CommandXboxController controller = new CommandXboxController(0);
+
+  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(CANBus.roboRIO());
 
   public RobotContainer() {
     configureBindings();
   }
 
   private void configureBindings() {
+    controller.a().onTrue(shooterSubsystem.runVoltage(12));
+    controller.a().onFalse(shooterSubsystem.runVoltage(0));
   }
 
   public Command getAutonomousCommand() {
