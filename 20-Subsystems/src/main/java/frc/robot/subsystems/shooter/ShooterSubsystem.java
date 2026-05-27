@@ -14,8 +14,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -25,15 +27,21 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ShooterSubsystem extends SubsystemBase {
   private final TalonFX motor;
+
+  private double goalVelocity = 0;
+
+  public final Trigger isAtVelocity = new Trigger(() -> MathUtil.isNear(goalVelocity, getVelocity(), 10));
 
   private final Alert motorNotConnectedAlert = new Alert("Shooter Motor Not Connected", AlertType.kError);
 
   private final StatusSignal<Voltage> motorVoltage;
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Current> motorStatorCurrent;
+  private final StatusSignal<AngularVelocity> motorVelocity;
 
   private final VelocityVoltage request = new VelocityVoltage(0);
 
@@ -50,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = 80;
 
     config.Slot0.kS = 0;
-    config.Slot0.kV = 0.1125;
+    config.Slot0.kV = 0;
     config.Slot0.kP = 0;
 
     motor.getConfigurator().apply(config);
@@ -58,6 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
     motorVoltage = motor.getMotorVoltage();
     motorTemp = motor.getDeviceTemp();
     motorStatorCurrent = motor.getStatorCurrent();
+    motorVelocity = motor.getVelocity();
 
     BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent);
   }
@@ -95,7 +104,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command runVelocity (double rps) {
     return this.runOnce(() -> {
       motor.setControl(request.withVelocity(rps));
+      goalVelocity = rps;
     });
+  }
+
+  public double getVelocity() {
+    return motorVelocity.getValueAsDouble();
   }
 
     /* Simulation */
