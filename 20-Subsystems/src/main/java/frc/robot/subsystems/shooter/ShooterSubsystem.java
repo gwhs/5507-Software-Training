@@ -82,6 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
     DogLog.log("Shooter/Motor Temp", motorTemp.getValueAsDouble());
     DogLog.log("Shooter/Stator Current", motorStatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor Velocity", motorVelocity.getValueAsDouble());
+    DogLog.log("Shooter/Velocity Goal", goalVelocity);
   }
 
   public Command startShooter() {
