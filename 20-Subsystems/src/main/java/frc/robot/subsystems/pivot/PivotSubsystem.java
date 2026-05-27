@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -43,7 +44,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final StatusSignal<Current> motorStatorCurrent;
   private final StatusSignal<Angle> motorPosition;
 
-  private final PositionVoltage request = new PositionVoltage(0);
+  private final MotionMagicVoltage request = new MotionMagicVoltage(0);
 
   /** Creates a new PivotSubsystem. */
   public PivotSubsystem(CANBus canBus) {
@@ -60,6 +61,14 @@ public class PivotSubsystem extends SubsystemBase {
     config.Slot0.kS = 0;
     config.Slot0.kV = 0.1125;
     config.Slot0.kP = 2;
+
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true; 
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+
+    config.MotionMagic.MotionMagicAcceleration = 0.1;
+    config.MotionMagic.MotionMagicCruiseVelocity = 0.5;
 
     motor.getConfigurator().apply(config);
 
