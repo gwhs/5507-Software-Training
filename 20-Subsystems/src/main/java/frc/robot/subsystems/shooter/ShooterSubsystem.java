@@ -68,7 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
     motorStatorCurrent = motor.getStatorCurrent();
     motorVelocity = motor.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motorVelocity);
   }
 
   @Override
@@ -76,11 +76,12 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     motorNotConnectedAlert.set(!motor.isConnected());
 
-    BaseStatusSignal.refreshAll(motorVoltage, motorTemp, motorStatorCurrent);
+    BaseStatusSignal.refreshAll(motorVoltage, motorTemp, motorStatorCurrent, motorVelocity);
 
     DogLog.log("Shooter/Motor Voltage", motorVoltage.getValueAsDouble());
     DogLog.log("Shooter/Motor Temp", motorTemp.getValueAsDouble());
     DogLog.log("Shooter/Stator Current", motorStatorCurrent.getValueAsDouble());
+    DogLog.log("Shooter/Motor Velocity", motorVelocity.getValueAsDouble());
   }
 
   public Command startShooter() {
