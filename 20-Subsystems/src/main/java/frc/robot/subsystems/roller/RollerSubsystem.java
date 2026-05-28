@@ -73,7 +73,9 @@ public class RollerSubsystem extends SubsystemBase {
     motor2Temp = motor2.getDeviceTemp();
     motor2StatorCurrent = motor2.getStatorCurrent();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motor2Voltage, motor2Temp, motor2StatorCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorTemp, motorStatorCurrent, motor2Temp, motor2StatorCurrent);
+    
+    BaseStatusSignal.setUpdateFrequencyForAll(250, motorVoltage, motor2Voltage, motor.getTorqueCurrent(), motor2.getTorqueCurrent());
   }
 
   @Override
@@ -87,6 +89,7 @@ public class RollerSubsystem extends SubsystemBase {
     DogLog.log("Roller/Motor 1 Voltage", motorVoltage.getValueAsDouble());
     DogLog.log("Roller/Motor 1 Device Temp", motorTemp.getValueAsDouble());
     DogLog.log("Roller/Motor 1 Stator Current", motorStatorCurrent.getValueAsDouble());
+
     DogLog.log("Roller/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
     DogLog.log("Roller/Motor 2 Device Temp", motor2Temp.getValueAsDouble());
     DogLog.log("Roller/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
