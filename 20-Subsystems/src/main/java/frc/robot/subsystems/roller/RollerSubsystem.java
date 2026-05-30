@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -74,7 +73,7 @@ public class RollerSubsystem extends SubsystemBase {
     motor2StatorCurrent = motor2.getStatorCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(50, motorTemp, motorStatorCurrent, motor2Temp, motor2StatorCurrent);
-    
+
     BaseStatusSignal.setUpdateFrequencyForAll(250, motorVoltage, motor2Voltage, motor.getTorqueCurrent(), motor2.getTorqueCurrent());
   }
 
