@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -80,6 +81,11 @@ public class PivotSubsystem extends SubsystemBase {
 
     config.MotionMagic.MotionMagicAcceleration = 0.1;
     config.MotionMagic.MotionMagicCruiseVelocity = 0.5;
+
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
+    config.Feedback.RotorToSensorRatio = 16;
+    config.Feedback.SensorToMechanismRatio = 1;
 
     motor.getConfigurator().apply(config);
 
