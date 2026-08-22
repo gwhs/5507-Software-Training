@@ -36,6 +36,9 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Basic Auton", new BasicAuton(shooter, indexer, groundIntakePivot, groundIntakeRoller));
   }
 
+  public void periodic() {
+  }
+
   private void configureBindings() {
     swerve.setDefaultCommand(swerveDriveCommand);
 
