@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.BasicAuton;
+import frc.robot.subsystems.aprilTagCam.AprilTagCam;
+import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.groundIntakePivot.GroundIntakePivotSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -36,7 +38,9 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Basic Auton", new BasicAuton(shooter, indexer, groundIntakePivot, groundIntakeRoller));
   }
 
+  private AprilTagCam backRightCam = new AprilTagCam(AprilTagCamConstants.BACK_RIGHT_CAM, AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION, swerve::addVisionMeasurement, () -> swerve.getState().Pose, () -> swerve.getState().Speeds);
   public void periodic() {
+    backRightCam.updatePoseEstim();
   }
 
   private void configureBindings() {
