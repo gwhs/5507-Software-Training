@@ -15,6 +15,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -39,9 +41,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   private double maxSpeed = TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = 2.5 * Math.PI;
-
-  private final Telemetry logger =
-      new Telemetry(TunerConstants_Comp.kSpeedAt12Volts.in(MetersPerSecond));
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -73,7 +72,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     resetPose(new Pose2d(10, 3, Rotation2d.kZero));
-    registerTelemetry(logger::telemeterize);
   }
 
   private void configureAutoBuilder() {
@@ -126,6 +124,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
+    /* Log Things */
+    SwerveDriveState swerveState = getState();
+    DogLog.log("Swerve/Robot Pose", swerveState.Pose);
+    DogLog.log("Swerve/Speeds", swerveState.Speeds);
+    DogLog.log("Swerve/ModuleStates", swerveState.ModuleStates);
+    DogLog.log("Swerve/ModuleTargets", swerveState.ModuleTargets);
+    DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
+    DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
   }
 
   private void startSimThread() {
