@@ -41,9 +41,9 @@ public class RobotContainer {
     controller.x().onTrue(elevator.runHeight(0));
 
     // TODO 1: press left bumper: set arm angle to 120
-
+    controller.leftBumper().onTrue(arm.runAngle(angle:120));
     // TODO 2: press right bumper -> set arm angle to -90
-
+    controller.rightBumper().onTrue(arm.runAngle(angle:-90));
     // TODO 3: press start -> score L4 Coral
     // ↓↓↓↓↓↓↓↓↓↓ COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST ↓↓↓↓↓↓↓↓↓↓
 
