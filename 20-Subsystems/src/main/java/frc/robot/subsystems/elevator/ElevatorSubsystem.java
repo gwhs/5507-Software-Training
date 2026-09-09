@@ -40,8 +40,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double goalPosition = 0;
 
-  public final Trigger isAtPosition = new Trigger(() -> MathUtil.isNear(goalPosition, getPosition(), 1));
-  public final Trigger isAtZero = new Trigger(() -> getCurrent() > 18 && getVelocity() < 1).debounce(1);
+  public final Trigger isAtGoalPosition = new Trigger(() -> MathUtil.isNear(goalPosition, getPosition(), 1));
+  public final Trigger isAtBottom = new Trigger(() -> getCurrent() > 18 && getVelocity() < 1).debounce(1);
 
   private final Alert motor1NotConnectedAlert = new Alert("Elevator Motor 1 Not Connected", AlertType.kError);
   private final Alert motor2NotConnectedAlert = new Alert("Elevator Motor 2 Not Connected", AlertType.kError);
@@ -131,8 +131,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     DogLog.log("Elevator/Motor 2 Velocity", motor2Velocity.getValueAsDouble());
     DogLog.log("Elevator/Motor 2 Is Connected", motor2.isConnected());
 
-    DogLog.log("Elevator/isAtPosition", isAtPosition.getAsBoolean());
-    DogLog.log("Elevator/isAtZero", isAtZero.getAsBoolean());
+    DogLog.log("Elevator/isAtGoalPosition", isAtGoalPosition.getAsBoolean());
+    DogLog.log("Elevator/isAtBottom", isAtBottom.getAsBoolean());
   }
 
   public Command runPosition (double rotation) {
@@ -160,7 +160,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command homing() {
     return Commands.sequence(
       runVoltage(-1),
-      Commands.waitUntil(isAtZero),
+      Commands.waitUntil(isAtBottom),
       runVoltage(0),
       setPosition(0)
     );
