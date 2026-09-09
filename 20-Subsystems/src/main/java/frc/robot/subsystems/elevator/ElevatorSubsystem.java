@@ -88,6 +88,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     config.MotionMagic.MotionMagicCruiseVelocity = 0.5;
 
     motor1.getConfigurator().apply(config);
+
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     motor2.getConfigurator().apply(config);
 
     motor1Voltage = motor1.getMotorVoltage();
