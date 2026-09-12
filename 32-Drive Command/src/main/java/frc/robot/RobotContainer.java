@@ -6,14 +6,29 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Comp;
 
 public class RobotContainer {
 
+  private final SwerveSubsystem swerve = TunerConstants_Comp.createDrivetrain();
+
+  private final CommandXboxController controller = new CommandXboxController(0);
+
+  private final DriveCommand defaultDriveCommand = new DriveCommand(swerve, controller);
+
   public RobotContainer() {
     configureBindings();
+
+    swerve.setDefaultCommand(defaultDriveCommand);
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    controller.a().onTrue(swerve.setSlowMode(0,1));
+    controller.a().onFalse(swerve.setSlowMode(false));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

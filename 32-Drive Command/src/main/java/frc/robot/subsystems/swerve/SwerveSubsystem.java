@@ -15,12 +15,15 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
@@ -29,6 +32,14 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     implements Subsystem {
+
+
+  //Workshop Slide Activity
+  private double translationSlowFactor = 1;
+  private double rotationSlowFactor = 1;
+  private boolean isSlowMode = false;
+
+  private final double defaultSlowFactor = 0.25;
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -118,6 +129,33 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     m_simNotifier.startPeriodic(kSimLoopPeriod);
   }
 
+  public Command setSlowMode(boolean enable) {
+    return Commands.runOnce(() -> {
+      this.isSlowMode = enable;
+      this.translationSlowFactor = defaultSlowFactor;
+      this.rotationSlowFactor = defaultSlowFactor;
+    });
+  }
+
+  public Command setSlowMode(double translationSlowFactor, double rotationSlowFactor) {
+    return Commands.runOnce(() -> {
+      this.isSlowMode = true;
+      this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+      this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+    });
+  }
+
+  public boolean isSlowMode() {
+    return isSlowMode;
+  }
+
+  public double getTranslationSlowFactor() {
+    return translationSlowFactor;
+  }
+
+  public double getRotationalSlowFactor() {
+    return rotationSlowFactor;
+  }
   @Override
   public void periodic() {
     /*
@@ -148,4 +186,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
     DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
   }
+
+
 }
