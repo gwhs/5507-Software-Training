@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import frc.robot.commands.autonomous.EagleFollowPathCommand;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
