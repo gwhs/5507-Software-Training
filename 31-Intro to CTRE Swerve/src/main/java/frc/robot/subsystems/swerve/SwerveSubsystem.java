@@ -34,7 +34,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
 
-  private double maxSpeed = TunerConstants_Anemone.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = 2.5 * Math.PI;
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
