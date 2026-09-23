@@ -13,6 +13,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -118,6 +120,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
               });
+
+      // Log things
+      SwerveDriveState swerveDriveState = getState();
+      DogLog.log("Swerve/Robot Pose", swerveDriveState.Pose);
+      DogLog.log("Swerve/Speeds", swerveDriveState.Speeds);
+      DogLog.log("Swerve/Module States", swerveDriveState.ModuleStates);
+      DogLog.log("Swerve/Module Targets", swerveDriveState.ModuleTargets);
+      DogLog.log("Swerve/Timestamp", swerveDriveState.Timestamp);
+      DogLog.log("Swerve/Odomertry Frequency", 1.0 / swerveDriveState.OdometryPeriod);
     }
   }
 
