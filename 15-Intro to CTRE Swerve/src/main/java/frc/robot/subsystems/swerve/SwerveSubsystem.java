@@ -13,6 +13,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -112,6 +114,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
+
+    SwerveDriveState swerveState = getState();
+    DogLog.log("Swerve/Robot Pose", swerveState.Pose);
+    DogLog.log("Swerve/Speeds", swerveState.Speeds);
+    DogLog.log("Swerve/ModuleStates", swerveState.ModuleStates);
+    DogLog.log("Swerve/ModuleTargets", swerveState.ModuleTargets);
+    DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
+    DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
+
     if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
       DriverStation.getAlliance()
           .ifPresent(
