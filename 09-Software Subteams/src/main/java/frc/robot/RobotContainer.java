@@ -40,10 +40,10 @@ public class RobotContainer {
      * Button Bindings
      ********************/
     // TODO: Press right trigger to shoot balls (end with semicolon ;)
-
+    controller.rightTrigger().whileTrue(shootBall());
 
     // TODO: Release right trigger to stop shooting balls (end with semicolon ;)
-
+    controller.rightTrigger().onFalse(stopShooting());
 
     // Example: 
     // Press left trigger to deploy ground intake
@@ -59,18 +59,18 @@ public class RobotContainer {
   public Command shootBall() {
     return Commands.parallel(
         // TODO: Run shooter at 40 rotations per second (end with comma ,)
-
+      shooter.runVelocity(40)
         // TODO: Run indexer at 10 volts
-
+      indexer.runVoltage(10)
         );
   }
 
   public Command stopShooting() {
     return Commands.parallel(
         // TODO: Stop shooter (add comma , at the end) (end with comma ,)
-
+        shooter.stopShooters(),
         // TODO: Stop indexer
-
+        indexer.runVoltage(0)
         );
   }
 
