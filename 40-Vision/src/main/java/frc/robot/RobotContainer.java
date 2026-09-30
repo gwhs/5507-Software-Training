@@ -15,6 +15,8 @@ import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.groundIntakePivot.GroundIntakePivotSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
+import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_mk5n;
@@ -41,7 +43,9 @@ public class RobotContainer {
   private AprilTagCam backRightCam = new AprilTagCam(AprilTagCamConstants.BACK_RIGHT_CAM, AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION, swerve::addVisionMeasurement, () -> swerve.getState().Pose, () -> swerve.getState().Speeds);
   public void periodic() {
     backRightCam.updatePoseEstim();
+    backRightObjCam.updateDetection();
   }
+  private ObjectDetectionCam backRightObjCam = new ObjectDetectionCam("cam_back_right_obj", AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION, () -> swerve.getState().Pose);
 
   private void configureBindings() {
     swerve.setDefaultCommand(swerveDriveCommand);
