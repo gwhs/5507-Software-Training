@@ -45,8 +45,8 @@ public class RobotContainer {
     // TODO 2: press right bumper -> set arm angle to -90
     controller.rightBumper().onTrue(arm.runAngle(-90));
     // TODO 3: press start -> score L4 Coral
+    controller.start().onTrue(scoreL4Coral());
     // vvvvvvvvvvvvvvvvvvvvv COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST vvvvvvvvvvvvvvvvvvvvv
-    
   }
 
   public Command getAutonomousCommand() {
@@ -60,25 +60,25 @@ public class RobotContainer {
     return Commands.sequence(
         // TODO:
         // Command 1: In parallel: (Commands.parallel())
-        Commands.parallel(elevator.setheight(ElevatorConstants.L4_PREP_POSITION),
-                  arm.setAngle(ArmConstants.L4_PREP_POSITION))
+      Commands.parallel(
+        elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+        arm.rotate(ArmConstants.L4_PREP_POSITION)
+      ).withTimeout(2),
         //     Command 1a: extend elevator to ElevatorConstants.L4_PREP_POSITION
         //     Command 1b: rotate arm to ArmConstants.L4_PREP_POSITION
         // Command 2: Spin endeffector at EndEffectorConstants.VOLTAGE_L4
-        endEffector.setVoltage(ArmConstants.L4_PREP_POSITION),
-        
+      endEffector.spin(EndEffectorConstants.VOLTAGE_L4),
         // Command 3: Wait 0.05 seconds (Commands.waitSeconds())
-        Commands.waitSeconds(0.05),
+      Commands.waitSeconds(0.05),
         // Command 4: In parallel:
-        Commands.parallel(elevator.setheight(ElevatorConstants.STOW_METER),
-                  
+      Comands.parallel(
+        elevator.runHeight(ElevatorConstants.STOW_METER),
+        arm.rotate(ArmConstants.ARM_STOW_ANGLE),
+        endEffector.runVoltage(0) 
+      )
         //     Command 4a: retract elevator to ElevatorConstants.STOW_METER
         //     Command 4b: rotate arm to ArmConstants.ARM_STOW_ANGLE
-                  arm.setAngle(ArmConstants.ARM_STOW_ANGLE)
-                  
         //     Command 4c: spin endeffector at 0 volts
-                  endEffector.spin((0))
-          ) 
         );
   }
 }
