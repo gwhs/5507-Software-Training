@@ -114,10 +114,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     /* Log Things */
     SwerveDriveState swerveState = getState();
+    DogLog.log("Swerve/Robot Pose", swerveState.Pose);
     DogLog.log("Swerve/Speeds", swerveState.Speeds);
     DogLog.log("Swerve/ModuleStates", swerveState.ModuleStates);
     DogLog.log("Swerve/ModuleTargets", swerveState.ModuleTargets);
-    DogLog.log("Swerve/ModulePositions", swerveState.ModulePositions);
     DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
     DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
   }
