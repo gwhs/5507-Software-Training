@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -13,6 +15,12 @@ public class DriveCommand extends Command {
   /** Creates a new DriveCommand. */
   private final SwerveSubsystem drivetrain;
   private final CommandXboxController controller;
+
+  private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric(); 
+    
+  private final double maxSpeed = 4.5; // ms/s
+  private final double maxAngularSpeed = 2.5 * Math.PI; //radians
+
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     this.drivetrain= drivetrain;
@@ -28,7 +36,15 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    double xInput = -controller.getLeftY();
+    double yInput = -controller.getLeftX();
+    double rotationInput = -controller.getRightX();
+
+    double xVelocity = xInput * maxSpeed;
+    double yVelocity = yInput * maxSpeed;
+    double rotationVelocity = rotationInput * maxAngularSpeed;
+
+    drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
 
   }
 
