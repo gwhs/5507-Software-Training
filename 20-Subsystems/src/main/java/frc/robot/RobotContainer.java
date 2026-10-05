@@ -4,15 +4,23 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
 
+  private final CANBus rioBus = new CANBus("rio");
+  private final CANBus canivoreBus = new CANBus("CAN_Network");
   private final CommandXboxController controller = new CommandXboxController(0);
 
+  private final ShooterSubsystem shooter = new ShooterSubsystem(rioBus);
+
   public RobotContainer() {
+    
     configureBindings();
   }
 
