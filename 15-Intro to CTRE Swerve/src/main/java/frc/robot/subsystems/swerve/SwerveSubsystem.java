@@ -185,6 +185,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     });
   }
 
+  public Command setSlowMode(double translationSlowFactor, double rotationSlowFactor) {
+    return this.runOnce(() -> {
+      this.slowMode = true;
+      this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+      this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+    });
+  }
+
   public boolean isSlowMode() {
     return slowMode;
   }
