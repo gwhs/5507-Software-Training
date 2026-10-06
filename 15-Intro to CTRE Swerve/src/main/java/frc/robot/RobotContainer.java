@@ -7,9 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 
 public class RobotContainer {
   private final SwerveSubsystem drivetrain = TunerConstants_Anemone.createDrivetrain();

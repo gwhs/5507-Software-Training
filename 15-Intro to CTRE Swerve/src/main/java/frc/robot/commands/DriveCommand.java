@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -14,16 +15,18 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class DriveCommand extends Command {
   /** Creates a new DriveCommand. */
   private final SwerveSubsystem drivetrain;
+
   private final CommandXboxController controller;
 
-  private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric(); 
-    
-  private final double maxSpeed = 4.5; // ms/s
-  private final double maxAngularSpeed = 2.5 * Math.PI; //radians
+  private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric();
 
+  private final double maxSpeed = 4.5; // ms/s
+  private final double maxAngularSpeed = 2.5 * Math.PI; // radians
+
+  private final double deadband = 0.06;
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
-    this.drivetrain= drivetrain;
+    this.drivetrain = drivetrain;
     this.controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -40,12 +43,26 @@ public class DriveCommand extends Command {
     double yInput = -controller.getLeftX();
     double rotationInput = -controller.getRightX();
 
+    //deadband
+    xInput = MathUtil.applyDeadband(xInput, deadband);
+    yInput = MathUtil.applyDeadband(yInput, deadband);
+    rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
+
+    if (drivetrain.isSlowMode()) {
+      xInput = xInput * drivetrain.getTranslationSlowFactor();
+      yInput = yInput * drivetrain.getTranslationSlowFactor();
+      rotationInput = rotationInput * drivetrain.getRotationSlowFactor();
+    }
+
     double xVelocity = xInput * maxSpeed;
     double yVelocity = yInput * maxSpeed;
     double rotationVelocity = rotationInput * maxAngularSpeed;
 
-    drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
-
+    drivetrain.setControl(
+        fieldCentric
+            .withVelocityX(xVelocity)
+            .withVelocityY(yVelocity)
+            .withRotationalRate(rotationVelocity));
   }
 
   // Called once the command ends or is interrupted.

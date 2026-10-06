@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -54,7 +53,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new SwerveRequest.ApplyRobotSpeeds();
 
   private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric();
+  
+  private double translationSlowFactor = 1;
+  private double rotationSlowFactor = 1;
+  private boolean slowMode = false;
 
+  private final double defaultSlowFactor = 0.25;
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -103,6 +107,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       DriverStation.reportError(
           "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
     }
+
+    
   }
 
   @Override
@@ -171,4 +177,24 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                   .withRotationalRate(angularVelocity));
         });
   }
+   public Command setSlowMode(boolean toggle) {
+    return this.runOnce(() -> {
+      this.slowMode = toggle;
+      this.translationSlowFactor = defaultSlowFactor;
+      this.rotationSlowFactor = defaultSlowFactor;
+    });
+  }
+
+  public boolean isSlowMode() {
+    return slowMode;
+  }
+
+  public double getTranslationSlowFactor() {
+    return translationSlowFactor;
+  }
+
+  public double getRotationSlowFactor() {
+    return rotationSlowFactor;
+  }
+
 }
