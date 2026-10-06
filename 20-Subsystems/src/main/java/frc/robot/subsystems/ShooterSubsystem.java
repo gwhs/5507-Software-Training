@@ -8,8 +8,11 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.fasterxml.jackson.databind.ser.std.StaticListSerializerBase;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,12 +22,18 @@ public class ShooterSubsystem extends SubsystemBase {
   //private final TalonFX motor1;
   private final TalonFX motor;
 
+  private final Alert motorNotConnectedAlert = new Alert("Shooter Motor Not Connected", AlertType.kError); //run on wednesday slide 83
+
   public ShooterSubsystem(CANBus canBus) {
     motor = new TalonFX(21, canBus);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake; //run on wednesday slide 77
+
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = 10.0; //run on wednesday slide 67
 
     motor.getConfigurator().apply(config); //run on wednesday pg 57
     //motor1 = new TalonFX(22, canBus);
@@ -32,9 +41,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    //motor.setVoltage(1);
-    //motor1.setVoltage(1);
+        // This method will be called once per scheduler run
+        //motor.setVoltage(1);
+        //motor1.setVoltage(1);
+        motorNotConnectedAlert.set(!motor.isConnected()); //slide 83
   }
   public Command startShooter() {
     return this.runOnce(() -> {
