@@ -25,6 +25,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    controller.a().onTrue(shooter.startShooter());
+    controller.a().onFalse(shooter.stopShooter()); //do slide 41 on wednesday
   }
 
   public Command getAutonomousCommand() {
