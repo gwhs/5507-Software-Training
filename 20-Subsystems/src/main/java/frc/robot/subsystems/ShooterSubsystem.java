@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.fasterxml.jackson.databind.ser.std.StaticListSerializerBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +21,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem(CANBus canBus) {
     motor = new TalonFX(21, canBus);
+
+    TalonFXConfiguration config = new TalonFXConfiguration();
+
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    motor.getConfigurator().apply(config); //run on wednesday pg 57
     //motor1 = new TalonFX(22, canBus);
   }
 
