@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -43,7 +42,7 @@ public class DriveCommand extends Command {
     double yInput = -controller.getLeftX();
     double rotationInput = -controller.getRightX();
 
-    //deadband
+    // deadband
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);

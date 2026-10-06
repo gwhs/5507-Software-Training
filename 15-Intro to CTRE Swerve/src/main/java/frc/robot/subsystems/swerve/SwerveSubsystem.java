@@ -53,12 +53,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new SwerveRequest.ApplyRobotSpeeds();
 
   private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric();
-  
+
   private double translationSlowFactor = 1;
   private double rotationSlowFactor = 1;
   private boolean slowMode = false;
 
   private final double defaultSlowFactor = 0.25;
+
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -107,8 +108,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       DriverStation.reportError(
           "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
     }
-
-    
   }
 
   @Override
@@ -177,20 +176,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                   .withRotationalRate(angularVelocity));
         });
   }
-   public Command setSlowMode(boolean toggle) {
-    return this.runOnce(() -> {
-      this.slowMode = toggle;
-      this.translationSlowFactor = defaultSlowFactor;
-      this.rotationSlowFactor = defaultSlowFactor;
-    });
+
+  public Command setSlowMode(boolean toggle) {
+    return this.runOnce(
+        () -> {
+          this.slowMode = toggle;
+          this.translationSlowFactor = defaultSlowFactor;
+          this.rotationSlowFactor = defaultSlowFactor;
+        });
   }
 
   public Command setSlowMode(double translationSlowFactor, double rotationSlowFactor) {
-    return this.runOnce(() -> {
-      this.slowMode = true;
-      this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
-      this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
-    });
+    return this.runOnce(
+        () -> {
+          this.slowMode = true;
+          this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+          this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+        });
   }
 
   public boolean isSlowMode() {
@@ -204,5 +206,4 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public double getRotationSlowFactor() {
     return rotationSlowFactor;
   }
-
 }
