@@ -5,20 +5,23 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
-    @SuppressWarnings("unused")
     private final SwerveSubsystem drivetrain;
-    @SuppressWarnings("unused")
     private final CommandXboxController controller; 
 
     private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric();
+    
     private final double maxSpeed = 4.5; // m/s
     private final double maxAngularSpeed = 2.5 * Math.PI; // radians / sec
+    
+    private final double deadband = 0.06;
 
   /** Creates a new DriveCommand. */
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
@@ -42,6 +45,16 @@ public class DriveCommand extends Command {
     double xVelocity = xInput * maxSpeed;
     double yVelocity = yInput * maxSpeed;
     double rotationVelocity = rotationInput * maxAngularSpeed;
+
+    xInput = MathUtil.applyDeadband(xInput, deadband);
+    yInput = MathUtil.applyDeadband(yInput, deadband);
+    rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
+
+    if(drivetrain.isSlowMode()){
+      xInput = xInput * drivetrain.getTranslationSlowFactor();
+      yInput = yInput * drivetrain.getTranslationSlowFactor();
+      rotationInput = rotationInput * drivetrain.getRotationalSlowFactor();
+    }
 
     drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
   }
