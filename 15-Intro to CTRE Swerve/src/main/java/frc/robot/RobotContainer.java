@@ -23,7 +23,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    drivetrain.setDefaultCommand(drivetrain.defaultDrive(controller));
+    drivetrain.setDefaultCommand(defaultDriveCommand);
     controller.leftTrigger().onTrue(drivetrain.setSlowMode(true));
   }
 
