@@ -16,6 +16,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -71,6 +72,25 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       }
 
   //Workshop Slide Activity
+  private boolean isLimitAcceleration = false;
+  private boolean shouldResetLimiter = true;
+
+  private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
+  private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
+  private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(1);
+
+  public Command setLimitAcceleration(boolean enable) {
+    return Commands.runOnce(()-> {
+      this.isLimitAcceleration = true;
+      this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+      this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+    });
+  }
+
+  public boolean isLimitAcceleration() {
+    return isLimitAcceleration;
+  }
+
   private double translationSlowFactor = 1;
   private double rotationSlowFactor = 1;
   private boolean isSlowMode = false;

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -20,12 +21,18 @@ public class DriveCommand extends Command {
   private CommandXboxController controller;
   private SwerveRequest.FieldCentric request = new SwerveRequest.FieldCentric();
 
+  private boolean shouldResetLimiter = true;
+
   private final double maxSpeed = 4.5; // m/s
   private final double maxAngularSpeed = 2.5 * Math.PI; // radianss/s//s/s/s/s
 
   private final double deadband = 0.06;
 
   private final PIDController robotHeadingController = new PIDController(0.2, 0, 0);
+
+  private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
+  private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
+  private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(1);
 
   public DriveCommand(SwerveSubsystem swerve, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -51,6 +58,15 @@ public class DriveCommand extends Command {
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
+
+    if (swerve.isLimitAcceleration()) {
+    if(shouldResetLimiter) {
+      shouldResetLimiter = false;
+      xVelocityLimiter.reset(xInput);
+      yVelocityLimiter.reset(yInput);
+      angularVelocityLimiter.reset(rotationInput);
+    }
+  }
 
     if(swerve.isSlowMode()) {
       xInput = xInput * swerve.getTranslationSlowFactor();
