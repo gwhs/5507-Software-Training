@@ -5,12 +5,15 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.fasterxml.jackson.databind.ser.std.StaticListSerializerBase;
 
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,9 +23,11 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
   private final int TalonFX = 21;
   //private final TalonFX motor1;
-  private final TalonFX motor;
+  private final TalonFX motor; 
 
   private final Alert motorNotConnectedAlert = new Alert("Shooter Motor Not Connected", AlertType.kError); //run on wednesday slide 83
+  
+  public final StatusSignalVoltage.getMotorVoltage();
 
   public ShooterSubsystem(CANBus canBus) {
     motor = new TalonFX(21, canBus);
