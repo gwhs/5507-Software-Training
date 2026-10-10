@@ -17,6 +17,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,7 +36,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
       public enum RotationTarget {
         NORMAL, 
-        FORTY_FIVE
+        FORTY_FIVE,
+        RED_HUB
       }
 
       private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -58,6 +60,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           return 45.0;
           case NORMAL:
           return 0;
+          case RED_HUB:
+          Translation2d robotCoordinates = getState().Pose.getTranslation();
+          Translation2d redHub = new Translation2d(11.92, 4.03);
+
+          return redHub.minus(robotCoordinates).getAngle().getDegrees();
           default:
           return 0;
         }

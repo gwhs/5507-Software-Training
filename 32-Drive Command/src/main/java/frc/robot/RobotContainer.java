@@ -32,6 +32,7 @@ public class RobotContainer {
 
     controller.x().onTrue(swerve.setRotationTarget(RotationTarget.FORTY_FIVE));
     controller.y().onTrue(swerve.setRotationTarget(RotationTarget.NORMAL));
+    controller.rightTrigger().onTrue(swerve.setRotationTarget(RotationTarget.RED_HUB));
   }
 
   public Command getAutonomousCommand() {
