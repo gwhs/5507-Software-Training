@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Comp;
 
 public class RobotContainer {
@@ -28,6 +29,9 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(swerve.setSlowMode(0,1));
     controller.a().onFalse(swerve.setSlowMode(false));
+
+    controller.x().onTrue(swerve.setRotationTarget(RotationTarget.FORTY_FIVE));
+    controller.y().onTrue(swerve.setRotationTarget(RotationTarget.NORMAL));
   }
 
   public Command getAutonomousCommand() {

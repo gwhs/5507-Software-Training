@@ -33,6 +33,35 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     implements Subsystem {
 
+      public enum RotationTarget {
+        NORMAL, 
+        FORTY_FIVE
+      }
+
+      private RotationTarget rotationTarget = RotationTarget.NORMAL;
+
+      public Command setRotationTarget(RotationTarget rotationTarget)
+      {
+        return Commands.runOnce(()-> {
+          this.rotationTarget = rotationTarget;
+        });
+      }
+
+      public RotationTarget getRotationTarget() 
+      {
+        return this.rotationTarget;
+      }
+
+      public double getGoalHeading() {
+        switch(this.rotationTarget) {
+          case FORTY_FIVE:
+          return 45.0;
+          case NORMAL:
+          return 0;
+          default:
+          return 0;
+        }
+      }
 
   //Workshop Slide Activity
   private double translationSlowFactor = 1;

@@ -7,9 +7,11 @@ package frc.robot.commands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -22,7 +24,9 @@ public class DriveCommand extends Command {
   private final double maxAngularSpeed = 2.5 * Math.PI; // radianss/s//s/s/s/s
 
   private final double deadband = 0.06;
-  
+
+  private final PIDController robotHeadingController = new PIDController(0.2, 0, 0);
+
   public DriveCommand(SwerveSubsystem swerve, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerve = swerve;
@@ -30,6 +34,7 @@ public class DriveCommand extends Command {
 
     addRequirements(swerve);
 
+    robotHeadingController.enableContinuousInput(-180, 180);
   }
 
   // Called when the command is initially scheduled.
@@ -58,6 +63,17 @@ public class DriveCommand extends Command {
     double rotationVelocity = maxAngularSpeed * rotationInput;
 
     swerve.setControl(request.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
+
+    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
+
+    if (swerve.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
+      double currentRobotHeading = swerve.getState().Pose.getRotation().getDegrees();
+
+      robotHeadingController.setSetpoint(swerve.getGoalHeading());
+
+      double pidOutput = robotHeadingController.calculate(currentRobotHeading);
+      rotationInput = pidOutput;
+    }
   }
 
   // Called once the command ends or is interrupted.
