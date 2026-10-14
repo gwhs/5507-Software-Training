@@ -8,8 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.RobotVisualizer;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EndEffectorConstants;
 import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
 import frc.robot.subsystems.groundIntake.GroundIntakeSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -46,9 +49,6 @@ public class RobotContainer {
     controller.rightBumper().onTrue(arm.runAngle(-90));
     // TODO 3: press start -> score L4 Coral
     // vvvvvvvvvvvvvvvvvvvvv COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST vvvvvvvvvvvvvvvvvvvvv
-
-  }
-
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
@@ -58,6 +58,17 @@ public class RobotContainer {
    ********************/
   public Command scoreL4Coral() {
     return Commands.sequence(
+      Commands.parallel(
+        elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
+        arm.runAngle(ArmConstants.L4_PREP_POSITION)
+      ),
+      endEffector.runSpin(ElevatorConstants.L4_PREP_POSITION),
+      Commands.waitSeconds(0.05),
+      
+    )
+
+
+
         // TODO:
         // Command 1: In parallel: (Commands.parallel())
         //     Command 1a: extend elevator to ElevatorConstants.L4_PREP_POSITION
