@@ -62,9 +62,13 @@ public class RobotContainer {
         elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
         arm.runAngle(ArmConstants.L4_PREP_POSITION)
       ),
-      endEffector.runSpin(ElevatorConstants.L4_PREP_POSITION),
+      endEffector.runSpin(EndEffectorConstants.VOLTAGE_L4),
       Commands.waitSeconds(0.05),
-      
+      Commands.parallel(
+        elevator.runHeight(ElevatorConstants.STOW_METER),
+        arm.runAngle(ArmConstants.ARM_STOW_ANGLE),
+        endEffector.runVoltage(0)
+      )
     )
 
 
