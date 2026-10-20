@@ -37,7 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /* Proportional control */
     double error = targetHeight - currentHeight;
-    double kP = 500;
+    double kP = 430;
     double voltage = kP * error;
     elevatorSim.setInputVoltage(voltage);
     /* Trapezoidal Profile */
