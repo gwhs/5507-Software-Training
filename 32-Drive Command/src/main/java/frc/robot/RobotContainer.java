@@ -20,6 +20,9 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
+    controller.a().onTruesetRotationalTarget(DriveCommand.RotationalTarget.NORMAL);
+    controller.b().onTruesetRotationalTarget(DriveCommand.RotationalTarget.FORTY_FIVE);
+    
     drivetrain.setDefaultCommand(defaultDriveCommand);
   }
 
