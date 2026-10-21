@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 // import frc.robot.subsystems.swerve.TunerConstants;
 import frc.robot.subsystems.swerve.TunerConstants;
 
@@ -20,8 +21,9 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    controller.a().onTruesetRotationalTarget(DriveCommand.RotationalTarget.NORMAL);
-    controller.b().onTruesetRotationalTarget(DriveCommand.RotationalTarget.FORTY_FIVE);
+    controller.a().onTrue(drivetrain.setRotationalTarget(RotationTarget.NORMAL));
+    controller.b().onTrue(drivetrain.setRotationalTarget(RotationTarget.FOURTY_FIVE));
+    controller.rightTrigger().onTrue(drivetrain.setRotationalTarget(RotationTarget.RED_HUB));
     
     drivetrain.setDefaultCommand(defaultDriveCommand);
   }

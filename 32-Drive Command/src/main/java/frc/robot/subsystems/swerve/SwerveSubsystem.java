@@ -17,6 +17,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,7 +36,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public enum RotationTarget {
     NORMAL,
-    FOURTY_FIVE
+    FOURTY_FIVE, 
+    RED_HUB
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -50,16 +52,22 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return this.rotationTarget;
   }
 
-  public double getGoalHeading() {
-    switch(this.rotationTarget){
-      case FOURTY_FIVE:
-        return 45.0;
-      case NORMAL:
+  
+    public double getGoalHeading(){
+      switch (this.rotationTarget) {
+        case FOURTY_FIVE:
+          return 45.0;
+        case NORMAL:
+          return 0;
+        case RED_HUB:
+        Translation2d robotCoordinate = getState().Pose.getTranslation();
+        Translation2d redHub = new Translation2d(11.92, 4.03);
+
+        return redHub.minus(robotCoordinate).getAngle().getDegrees();
+        default:
         return 0;
-      default:
-        return 0;
+      }
     }
-  }
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -212,5 +220,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
         this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
       });
+    }
+
+    public Command setRotationalTarget(RotationTarget fourtyFive) {
+      // TODO Auto-generated method stub
+      throw new UnsupportedOperationException("Unimplemented method 'setRotationalTarget'");
     }
 }

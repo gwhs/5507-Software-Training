@@ -15,6 +15,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
+    public static final String RotationalTarget = null;
     private final SwerveSubsystem drivetrain;
     private final CommandXboxController controller; 
 
