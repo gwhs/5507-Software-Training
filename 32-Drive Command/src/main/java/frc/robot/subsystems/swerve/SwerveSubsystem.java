@@ -15,12 +15,16 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
@@ -29,6 +33,41 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     implements Subsystem {
+
+  public enum RotationTarget {
+    NORMAL,
+    FOURTY_FIVE, 
+    RED_HUB
+  }
+
+  private RotationTarget rotationTarget = RotationTarget.NORMAL;
+  
+  public Command setRotationTarget(RotationTarget rotationTarget) {
+    return Commands.runOnce(() -> {
+      this.rotationTarget = rotationTarget;
+    });
+  }
+
+  public RotationTarget getRotationTarget(){
+    return this.rotationTarget;
+  }
+
+  
+    public double getGoalHeading(){
+      switch (this.rotationTarget) {
+        case FOURTY_FIVE:
+          return 45.0;
+        case NORMAL:
+          return 0;
+        case RED_HUB:
+        Translation2d robotCoordinate = getState().Pose.getTranslation();
+        Translation2d redHub = new Translation2d(11.92, 4.03);
+
+        return redHub.minus(robotCoordinate).getAngle().getDegrees();
+        default:
+        return 0;
+      }
+    }
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -44,6 +83,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
       new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(DriveRequestType.Velocity);
+
+  private double translationSlowFactor = 1;
+  private double rotationSlowFactor = 1;
+  private boolean slowMode = false;
+
+  private final double defaultSlowFactor = 0.25;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -148,4 +193,37 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
     DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
   }
+
+      public Command setSlowMode(boolean enable) { 
+      return Commands.runOnce(() -> {
+        this.slowMode = enable;
+        this.translationSlowFactor = defaultSlowFactor; 
+        this.rotationSlowFactor = defaultSlowFactor;
+      });
+    }
+
+    public boolean isSlowMode(){
+      return slowMode;
+    }
+
+    public double getTranslationSlowFactor(){
+      return translationSlowFactor;
+    }
+
+    public double getRotationalSlowFactor(){
+      return rotationSlowFactor;
+    }
+
+    public Command setSlowMode(double translationSlowFactor, double rotationSlowFactor){
+      return Commands.runOnce(() -> {
+        this.slowMode = true;
+        this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+        this.rotationSlowFactor = MathUtil.clamp(rotationSlowFactor, 0, 1);
+      });
+    }
+
+    public Command setRotationalTarget(RotationTarget fourtyFive) {
+      // TODO Auto-generated method stub
+      throw new UnsupportedOperationException("Unimplemented method 'setRotationalTarget'");
+    }
 }

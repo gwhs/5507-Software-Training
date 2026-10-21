@@ -26,10 +26,20 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     double currentHeight = getHeight();
-    /* Bang-bang control */
+    /* Bang-bang control
+    if (currentHeight > targetHeight) {
+      elevatorSim.setInputVoltage(-3);
+    } else if (currentHeight < targetHeight) {
+      elevatorSim.setInputVoltage(3);
+    } else {
+      elevatorSim.setInputVoltage(0);
+    } */
 
     /* Proportional control */
-
+    double error = targetHeight - currentHeight;
+    double kP = 430;
+    double voltage = kP * error;
+    elevatorSim.setInputVoltage(voltage);
     /* Trapezoidal Profile */
 
     /* Velocity Feedforward */
