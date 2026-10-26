@@ -28,7 +28,7 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.06;
 
-  private final PIDController robotHeadingController = new PIDController(0.2, 0, 0);
+  private final PIDController robotHeadingController = new PIDController(0.1, 0, 0);
 
   private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
   private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
@@ -68,6 +68,17 @@ public class DriveCommand extends Command {
     }
   }
 
+    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
+
+    if (swerve.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
+      double currentRobotHeading = swerve.getState().Pose.getRotation().getDegrees();
+
+      robotHeadingController.setSetpoint(swerve.getGoalHeading());
+
+      double pidOutput = robotHeadingController.calculate(currentRobotHeading);
+      rotationInput = pidOutput;
+    }
+  
     if(swerve.isSlowMode()) {
       xInput = xInput * swerve.getTranslationSlowFactor();
       yInput = yInput * swerve.getTranslationSlowFactor();
@@ -79,18 +90,8 @@ public class DriveCommand extends Command {
     double rotationVelocity = maxAngularSpeed * rotationInput;
 
     swerve.setControl(request.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
+  } 
 
-    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
-
-    if (swerve.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
-      double currentRobotHeading = swerve.getState().Pose.getRotation().getDegrees();
-
-      robotHeadingController.setSetpoint(swerve.getGoalHeading());
-
-      double pidOutput = robotHeadingController.calculate(currentRobotHeading);
-      rotationInput = pidOutput;
-    }
-  }
 
   // Called once the command ends or is interrupted.
   @Override
