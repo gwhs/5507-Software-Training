@@ -30,9 +30,12 @@ public class RobotContainer {
     controller.a().onTrue(swerve.setSlowMode(0,1));
     controller.a().onFalse(swerve.setSlowMode(false));
 
-    controller.x().onTrue(swerve.setRotationTarget(RotationTarget.FORTY_FIVE));
+    //controller.x().onTrue(swerve.setRotationTarget(RotationTarget.FORTY_FIVE));
     controller.y().onTrue(swerve.setRotationTarget(RotationTarget.NORMAL));
     controller.rightTrigger().onTrue(swerve.setRotationTarget(RotationTarget.RED_HUB));
+
+    controller.b().onTrue(swerve.setLimitAcceleration(true));
+    controller.x().onTrue(swerve.setLimitAcceleration(false));
   }
 
   public Command getAutonomousCommand() {

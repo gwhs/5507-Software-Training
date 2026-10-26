@@ -28,7 +28,7 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.06;
 
-  private final PIDController robotHeadingController = new PIDController(0.1, 0, 0);
+  private final PIDController robotHeadingController = new PIDController(0.08, 0, 0);
 
   private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
   private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
@@ -66,6 +66,9 @@ public class DriveCommand extends Command {
       yVelocityLimiter.reset(yInput);
       angularVelocityLimiter.reset(rotationInput);
     }
+  }
+  else {
+    shouldResetLimiter = true;
   }
 
     boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
