@@ -8,6 +8,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -28,6 +29,14 @@ public class DriveCommand extends Command {
     
     private final PIDController robotHeadingController = new PIDController(0.2,0,0);
 
+    private boolean isLimitAcceleration = false; 
+    private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
+    private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
+    private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(1);
+
+    private boolean shouldResetRateLimiter = true;
+
+
   /** Creates a new DriveCommand. */
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     this.drivetrain = drivetrain;
@@ -35,6 +44,8 @@ public class DriveCommand extends Command {
 
     robotHeadingController.enableContinuousInput(-180, 180);
     
+    //if(drivetrain.isLimitAcceleration()){}
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -77,7 +88,23 @@ public class DriveCommand extends Command {
     }
 
     drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
-  }
+
+    // 
+    if(drivetrain.isLimitAcceleration()) {
+      if(shouldResetRateLimiter) {
+        shouldResetRateLimiter = false; 
+        xVelocityLimiter.reset(xInput); 
+        yVelocityLimiter.reset(yInput);
+        angularVelocityLimiter.reset((rotationInput));
+      }
+      xInput = xVelocityLimiter.calculate(xInput);
+      yInput = xVelocityLimiter.calculate(yInput);
+      rotationInput = angularVelocityLimiter.calculate(rotationInput);
+    } else { 
+        shouldResetRateLimiter = true;
+      }
+    }
+  
 
   // Called once the command ends or is interrupted.
   @Override
@@ -87,5 +114,14 @@ public class DriveCommand extends Command {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public Command setLimitAcceleration(boolean enable){
+    this.isLimitAcceleration = true;
+    return this;
+  }
+
+  public boolean isLimitAcceleration(){
+    return isLimitAcceleration;
   }
 }
