@@ -41,33 +41,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
-  
-  public Command setRotationTarget(RotationTarget rotationTarget) {
-    return Commands.runOnce(() -> {
-      this.rotationTarget = rotationTarget;
-    });
-  }
-
-  public RotationTarget getRotationTarget(){
-    return this.rotationTarget;
-  }
-
-  
-    public double getGoalHeading(){
-      switch (this.rotationTarget) {
-        case FOURTY_FIVE:
-          return 45.0;
-        case NORMAL:
-          return 0;
-        case RED_HUB:
-        Translation2d robotCoordinate = getState().Pose.getTranslation();
-        Translation2d redHub = new Translation2d(11.92, 4.03);
-
-        return redHub.minus(robotCoordinate).getAngle().getDegrees();
-        default:
-        return 0;
-      }
-    }
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -193,6 +166,33 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Swerve/Timestamp", swerveState.Timestamp);
     DogLog.log("Swerve/OdometryFrequency", 1.0 / swerveState.OdometryPeriod);
   }
+
+  public Command setRotationTarget(RotationTarget rotationTarget) {
+    return Commands.runOnce(() -> {
+      this.rotationTarget = rotationTarget;
+    });
+  }
+
+  public RotationTarget getRotationTarget(){
+    return this.rotationTarget;
+  }
+
+  
+    public double getGoalHeading(){
+      switch (this.rotationTarget) {
+        case FOURTY_FIVE:
+          return 45.0;
+        case NORMAL:
+          return 0;
+        case RED_HUB:
+        Translation2d robotCoordinate = getState().Pose.getTranslation();
+        Translation2d redHub = new Translation2d(11.92, 4.03);
+
+        return redHub.minus(robotCoordinate).getAngle().getDegrees();
+        default:
+        return 0;
+      }
+    }
 
       public Command setSlowMode(boolean enable) { 
       return Commands.runOnce(() -> {

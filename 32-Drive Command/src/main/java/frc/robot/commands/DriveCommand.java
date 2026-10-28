@@ -115,13 +115,4 @@ public class DriveCommand extends Command {
   public boolean isFinished() {
     return false;
   }
-
-  public Command setLimitAcceleration(boolean enable){
-    this.isLimitAcceleration = true;
-    return this;
-  }
-
-  public boolean isLimitAcceleration(){
-    return isLimitAcceleration;
-  }
 }
