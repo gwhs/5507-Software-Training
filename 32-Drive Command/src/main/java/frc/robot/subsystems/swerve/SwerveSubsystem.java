@@ -222,9 +222,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       });
     }
 
-    public Command setRotationalTarget(RotationTarget fourtyFive) {
-      // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("Unimplemented method 'setRotationalTarget'");
+    public Command setRotationalTarget(RotationTarget rotationTarget) {
+      return Commands.runOnce(() -> {
+        this.rotationTarget = rotationTarget;
+      });
     }
 
     private boolean isLimitAcceleration = false; 
