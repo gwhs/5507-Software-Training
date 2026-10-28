@@ -49,7 +49,8 @@ public class RobotContainer {
     controller.rightBumper().onTrue(arm.runAngle(-90));
     // TODO 3: press start -> score L4 Coral
     // vvvvvvvvvvvvvvvvvvvvv COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST vvvvvvvvvvvvvvvvvvvvv
-  public Command getAutonomousCommand() {
+  }
+    public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 
@@ -69,7 +70,7 @@ public class RobotContainer {
         arm.runAngle(ArmConstants.ARM_STOW_ANGLE),
         endEffector.runVoltage(0)
       )
-    )
+    );
 
 
 
@@ -83,6 +84,5 @@ public class RobotContainer {
         //     Command 4a: retract elevator to ElevatorConstants.STOW_METER
         //     Command 4b: rotate arm to ArmConstants.ARM_STOW_ANGLE
         //     Command 4c: spin endeffector at 0 volts
-        );
   }
 }
