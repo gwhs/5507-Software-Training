@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -33,6 +34,7 @@ public class RobotContainer {
     configureBindings();
   }
 
+
   private void configureBindings() {
     swerve.setDefaultCommand(swerve.defaultDrive(controller));
 
@@ -61,16 +63,17 @@ public class RobotContainer {
     return Commands.sequence(
       Commands.parallel(
         elevator.runHeight(ElevatorConstants.L4_PREP_POSITION),
-        arm.runAngle(ArmConstants.L4_PREP_POSITION)
-      ),
+        (arm.runAngle(ArmConstants.L4_PREP_POSITION))
+      ).withTimeout(0.5),
       endEffector.runSpin(EndEffectorConstants.VOLTAGE_L4),
       Commands.waitSeconds(0.05),
       Commands.parallel(
         elevator.runHeight(ElevatorConstants.STOW_METER),
         arm.runAngle(ArmConstants.ARM_STOW_ANGLE),
         endEffector.runVoltage(0)
-      )
-    );
+      ).withTimeout(0.01)
+    ).withName("Score L4 Coral");
+   }
 
 
 
@@ -85,4 +88,3 @@ public class RobotContainer {
         //     Command 4b: rotate arm to ArmConstants.ARM_STOW_ANGLE
         //     Command 4c: spin endeffector at 0 volts
   }
-}
