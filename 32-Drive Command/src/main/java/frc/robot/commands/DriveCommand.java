@@ -16,7 +16,6 @@ import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
-    public static final String RotationalTarget = null;
     private final SwerveSubsystem drivetrain;
     private final CommandXboxController controller; 
 
@@ -29,7 +28,6 @@ public class DriveCommand extends Command {
     
     private final PIDController robotHeadingController = new PIDController(0.2,0,0);
 
-    private boolean isLimitAcceleration = false; 
     private final SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(1);
     private final SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(1);
     private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(1);
@@ -61,16 +59,14 @@ public class DriveCommand extends Command {
     double yInput = -controller.getLeftX();
     double rotationInput = -controller.getRightX();
 
-    double xVelocity = xInput * maxSpeed;
-    double yVelocity = yInput * maxSpeed;
-    double rotationVelocity = rotationInput * maxAngularSpeed;
+    
 
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
 
     //Auto Rotation
-    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
+    /*boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
 
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
       double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
@@ -87,8 +83,6 @@ public class DriveCommand extends Command {
       rotationInput = rotationInput * drivetrain.getRotationalSlowFactor();
     }
 
-    drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
-
     // 
     if(drivetrain.isLimitAcceleration()) {
       if(shouldResetRateLimiter) {
@@ -102,7 +96,13 @@ public class DriveCommand extends Command {
       rotationInput = angularVelocityLimiter.calculate(rotationInput);
     } else { 
         shouldResetRateLimiter = true;
-      }
+      }*/
+
+    double xVelocity = xInput * maxSpeed;
+    double yVelocity = yInput * maxSpeed;
+    double rotationVelocity = rotationInput * maxAngularSpeed;
+      
+    drivetrain.setControl(fieldCentric.withVelocityX(xVelocity).withVelocityY(yVelocity).withRotationalRate(rotationVelocity));
     }
   
 

@@ -231,7 +231,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     private boolean isLimitAcceleration = false; 
     public Command setLimitAcceleration(boolean enable){
       return Commands.runOnce(() -> {
-        this.isLimitAcceleration = true;
+        this.isLimitAcceleration = enable;
       });
     }
 
