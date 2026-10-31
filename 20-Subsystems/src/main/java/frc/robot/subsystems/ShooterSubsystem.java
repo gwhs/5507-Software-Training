@@ -29,8 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
-  private final int TalonFX = 21;
-  //private final TalonFX motor1;
   private final TalonFX motor; 
 
   private double goalVelocity = 0;
@@ -58,8 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = 10.0; //run on wednesday slide 67
 
     config.Slot0.kS = 0;
-    config.Slot0.kV = 0;
-    config.Slot0.kP = 0; //workshop 23, slide 26
+    config.Slot0.kV = 0.12;
+    config.Slot0.kP = 2; //workshop 23, slide 26
 
     motor.getConfigurator().apply(config); //run on wednesday pg 57
     //motor1 = new TalonFX(22, canBus);
@@ -114,7 +112,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command runVelocity(double rps) {
     return this.runOnce(() -> {
-      motor.setControl(request.withVelocity(rps));
+            motor.setControl(request.withVelocity(rps));
       goalVelocity = rps;
     });
   }
