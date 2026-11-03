@@ -4,14 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -35,7 +39,9 @@ public class PivotSubsystem extends SubsystemBase {
   private final StatusSignal <Voltage> motorVoltage;
   private final StatusSignal <Temperature> motorTemp;
   private final StatusSignal <Current> motorStatorCurrent;
-  private final StatusSignal <AngularVelocity> motorVelocity;
+  private final StatusSignal <Angle> motorPosition;
+
+  private final PositionVoltage request = new PositionVoltage(0);
 
   public PivotSubsystem(CANBus canBus) {
     motor = new TalonFX (32, canBus);
@@ -45,17 +51,44 @@ public class PivotSubsystem extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.StatorCurrentLimit = 20;
+
+    config.Slot0.kS = 0;
+    config.Slot0.kV = 0.1125;
+    config.Slot0.kP = 2;
+
+    motor.getConfigurator().apply(config);
+
+    motorVoltage = motor.getMotorVoltage();
+    motorTemp =  motor.getDeviceTemp();
+    motorStatorCurrent = motor.getStatorCurrent();
+    motorPosition = motor.getPosition();
+    
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motorPosition) mo;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+            motorNotConnectedAlert.set(!motor.isConnected()); 
+        
+        BaseStatusSignal.refreshAll(motorVoltage, motorTemp, motorStatorCurrent, motorPosition, motorVelocity);
+
+        DogLog.log("Pivot/Motor Voltage", motorVoltage.getValueAsDouble());
+        DogLog.log("Pivot/Motor Temperature", motorTemp.getValueAsDouble());
+        DogLog.log("Pivot/Motor Stator Current", motorStatorCurrent.getValueAsDouble());
+        DogLog.log("Pivot/Motor Position", motorPosition.getValueAsDouble());
+        DogLog.log("Pivot/Motor Velocity", isAtPosition.getAsBoolean());
+
+        DogLog.log("Pivot/isAtPosition", isAtPosition.getAsBoolean());
   }
 
   public Command runPosition() {
-    return this.runOnce(() -> 
-      motor.setControl());
+    return this.runOnce(() -> {
+      motor.setControl(request.withPosition(rotation));
+      goalPosition = rotation;
+      });
     };
 
   public double getPosition() {
