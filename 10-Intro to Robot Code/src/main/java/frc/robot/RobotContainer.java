@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Newton;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,9 +31,10 @@ public class RobotContainer {
   private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
 
   private final CommandXboxController controller = new CommandXboxController(0);
-
+  private final SendableChooser autoChooser = new SendableChooser<>();
   public RobotContainer() {
     configureBindings();
+    autoChooser.addOption(null, Newton);
   }
 
   private void configureBindings() {
