@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.RobotVisualizer;
@@ -32,6 +33,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());;
   }
 
 
@@ -45,6 +48,10 @@ public class RobotContainer {
     controller.b().onTrue(elevator.runHeight(.75));
     controller.x().onTrue(elevator.runHeight(0));
 
+    
+    controller.start().and(controller.back()).debounce(1).onTrue(scoreL4Coral());
+    controller.start().and(controller.back().negate()).debounce(1).onTrue(arm.runAngle(90));
+    controller.back().and(controller.start().negate()).debounce(1).onTrue(arm.runAngle(-90));
     // TODO 1: press left bumper: set arm angle to 120
     controller.leftBumper().onTrue(arm.runAngle(120));
     // TODO 2: press right bumper -> set arm angle to -90
