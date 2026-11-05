@@ -9,6 +9,7 @@ import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
@@ -18,6 +19,7 @@ public class RobotContainer {
   private final CommandXboxController controller = new CommandXboxController(0);
 
   private final ShooterSubsystem shooter = new ShooterSubsystem(rioBus);
+  private final PivotSubsystem PivotSubsystem = new PivotSubsystem(canivoreBus);
 
   public RobotContainer() {
     
@@ -27,6 +29,9 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(shooter.startShooter());
     controller.a().onFalse(shooter.stopShooter()); //do slide 41 on wednesday
+    controller.y().onTrue(pivotSubsystem.runPosition(0));
+    controller.x().onTrue(pivotSubsystem.runPosition(5));
+
   }
 
   public Command getAutonomousCommand() {

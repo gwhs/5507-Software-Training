@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -19,6 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -40,6 +42,9 @@ public class PivotSubsystem extends SubsystemBase {
   private final StatusSignal <Temperature> motorTemp;
   private final StatusSignal <Current> motorStatorCurrent;
   private final StatusSignal <Angle> motorPosition;
+  private final StatusSignal <AngularVelocity> motorVelocity;
+
+  private final MotionMagicVoltage request = new MotionMagicVoltage(0);
 
   private final PositionVoltage request = new PositionVoltage(0);
 
@@ -58,14 +63,23 @@ public class PivotSubsystem extends SubsystemBase {
     config.Slot0.kV = 0.1125;
     config.Slot0.kP = 2;
 
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+
+    config.MotionMagic.MotionMagicAcceleration = 0.1;
+    config.MotionMagic.MotionMagicCruiseVelocity = 0.5;
+
     motor.getConfigurator().apply(config);
 
     motorVoltage = motor.getMotorVoltage();
     motorTemp =  motor.getDeviceTemp();
     motorStatorCurrent = motor.getStatorCurrent();
     motorPosition = motor.getPosition();
+    motorVelocity = motor.getVelocity();
     
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motorPosition) mo;
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motorPosition);
   }
 
   @Override
@@ -84,14 +98,14 @@ public class PivotSubsystem extends SubsystemBase {
         DogLog.log("Pivot/isAtPosition", isAtPosition.getAsBoolean());
   }
 
-  public Command runPosition() {
+  public Command runPosition(double rotation) {
     return this.runOnce(() -> {
       motor.setControl(request.withPosition(rotation));
       goalPosition = rotation;
       });
-    };
+    }
 
   public double getPosition() {
-    return motorPosition;
+    return motorPosition.getValueAsDouble();
   }
 }
