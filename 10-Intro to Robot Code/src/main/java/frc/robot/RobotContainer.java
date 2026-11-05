@@ -7,9 +7,11 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Newton;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.autonomous.Path;
 import frc.robot.subsystems.RobotVisualizer;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -31,10 +33,11 @@ public class RobotContainer {
   private final RobotVisualizer robotVisualizer = new RobotVisualizer(elevator, arm, groundIntake);
 
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final SendableChooser autoChooser = new SendableChooser<>();
+  private final SendableChooser <Command> autoChooser = new SendableChooser<Command>();
   public RobotContainer() {
     configureBindings();
-    autoChooser.addOption(null, Newton);
+    autoChooser.addOption("2 Cycle Auto",new Path() );
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   private void configureBindings() {
@@ -55,7 +58,7 @@ public class RobotContainer {
     // vvvvvvvvvvvvvvvvvvvvv COMPLETE THE COMMAND COMPOSITION IN scoreL4Coral() METHOD BELOW FIRST vvvvvvvvvvvvvvvvvvvvv
   }
     public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.getSelected();
   }
 
   /********************
