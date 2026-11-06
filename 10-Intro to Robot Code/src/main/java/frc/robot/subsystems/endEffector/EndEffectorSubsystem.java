@@ -28,4 +28,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
   public Command runVoltage(double voltage) {
     return Commands.runOnce(() -> motor.setInputVoltage(voltage));
   }
+
+public Command runSpin(double l4PrepPosition) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'runSpin'");
+}
 }
