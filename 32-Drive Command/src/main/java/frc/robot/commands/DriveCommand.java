@@ -59,14 +59,12 @@ public class DriveCommand extends Command {
     double yInput = -controller.getLeftX();
     double rotationInput = -controller.getRightX();
 
-    
-
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationInput = MathUtil.applyDeadband(rotationInput, deadband);
 
     //Auto Rotation
-    /*boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
+    boolean hasRotationInput = Math.abs(controller.getRightX()) > 0.1;
 
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
       double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
@@ -83,7 +81,7 @@ public class DriveCommand extends Command {
       rotationInput = rotationInput * drivetrain.getRotationalSlowFactor();
     }
 
-    // 
+    // Limit Acceleration
     if(drivetrain.isLimitAcceleration()) {
       if(shouldResetRateLimiter) {
         shouldResetRateLimiter = false; 
@@ -96,7 +94,7 @@ public class DriveCommand extends Command {
       rotationInput = angularVelocityLimiter.calculate(rotationInput);
     } else { 
         shouldResetRateLimiter = true;
-      }*/
+      }
 
     double xVelocity = xInput * maxSpeed;
     double yVelocity = yInput * maxSpeed;
