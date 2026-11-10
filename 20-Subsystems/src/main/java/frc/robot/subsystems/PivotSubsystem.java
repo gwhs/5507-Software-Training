@@ -46,7 +46,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0);
 
-  private final PositionVoltage request = new PositionVoltage(0);
+  private final PositionVoltage ask = new PositionVoltage(0);
 
   public PivotSubsystem(CANBus canBus) {
     motor = new TalonFX (32, canBus);

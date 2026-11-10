@@ -29,8 +29,8 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(shooter.startShooter());
     controller.a().onFalse(shooter.stopShooter()); //do slide 41 on wednesday
-    controller.y().onTrue(pivotSubsystem.runPosition(0));
-    controller.x().onTrue(pivotSubsystem.runPosition(5));
+    controller.y().onTrue(PivotSubsystem.runPosition(0));
+    controller.x().onTrue(PivotSubsystem.runPosition(5));
 
   }
 
