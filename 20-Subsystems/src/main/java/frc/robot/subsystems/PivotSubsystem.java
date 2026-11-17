@@ -10,6 +10,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,6 +26,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -34,9 +36,11 @@ public class PivotSubsystem extends SubsystemBase {
 
   private double goalPosition = 0;
 
-  private final Trigger isAtPosition = new Trigger(() -> MathUtil.isNear(goalPosition, getPosition(), 10));
-
   private final Alert motorNotConnectedAlert = new Alert ("Pivot Motor Not Connected", AlertType.kError);
+
+  private final Trigger isAtPosition = new Trigger(() -> MathUtil.isNear(goalPosition, getPosition(), 10));
+ 
+  public final Trigger isAtZero;
 
   private final StatusSignal <Voltage> motorVoltage;
   private final StatusSignal <Temperature> motorTemp;
@@ -45,6 +49,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final StatusSignal <AngularVelocity> motorVelocity;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0);
+  private final VoltageOut voltageRequest = new VoltageOut(0);
 
   private final PositionVoltage ask = new PositionVoltage(0);
 
@@ -78,6 +83,9 @@ public class PivotSubsystem extends SubsystemBase {
     motorStatorCurrent = motor.getStatorCurrent();
     motorPosition = motor.getPosition();
     motorVelocity = motor.getVelocity();
+
+    isAtZero = new Trigger(() -> motorStatorCurrent.getValueAsDouble() > 18 && motorVelocity.getValueAsDouble() < 1).debounce(0.5);
+
     
     BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorTemp, motorStatorCurrent, motorPosition);
   }
@@ -108,4 +116,26 @@ public class PivotSubsystem extends SubsystemBase {
   public double getPosition() {
     return motorPosition.getValueAsDouble();
   }
+
+  public Command runVoltage(double volt) {
+    return this.runOnce(() -> {
+      motor.setControl(voltageRequest.withOutput(volt).withIgnoreSoftwareLimits(true));
+      });
+    }
+
+  public Command setPostion(double rotation){
+    return this.runOnce(() -> {
+      motor.setPosition(rotation);
+    });
+  }
+
+  public Command homing(){
+    return Commands.sequence(
+      runVoltage(-1),
+      Commands.waitUntil(isAtZero),
+      runVoltage(0),
+      setPostion(0)
+    );
+  }
+
 }
